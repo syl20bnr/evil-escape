@@ -5,7 +5,7 @@
 ;;;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.0
+;; Version: 1.01
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
