@@ -53,6 +53,7 @@
   :prefix "evil-escape-"
   :group 'evil)
 
+;;;###autoload
 (defcustom evil-escape-key-sequence (kbd "fd")
   "Two keys sequence to escape from insert state."
   :type 'key-sequence
@@ -72,6 +73,46 @@ with a key sequence."
         (message "evil-escape enabled, press \"%s\" to escape from anything."
                  evil-escape-key-sequence))
     (evil-escape--undefine-keys)))
+
+(defmacro evil-escape-define-escape (map command &rest properties)
+  "Define an escape in MAP keymap by executing COMMAND.
+
+`:insert BOOL'
+     If BOOL is not nil the first character of the escape sequence is inserted
+     in the buffer using `:insert-func' if the buffer is not read-only.
+
+`:delete BOOL'
+     If BOOL is not nil the first character is deleted using `:delete-func' if
+     the escape sequence succeeded.
+
+`:shadowed BOOL'
+     BOOL not nil indicates that the first key of the sequence shadows a
+     function. This function is looked-up from `evil-motion-state-map'.
+     Whenever the escape sequence does not succeed and BOOL is not nil
+     the shadowed function is called.
+
+`:insert-func FUNCTION'
+     Specify the insert function to call when inserting the first key.
+
+`:delete-func FUNCTION'
+     Specify the delete function to call when deleting the first key."
+  (let* ((first-key (elt evil-escape-key-sequence 0))
+         (fkeystr (char-to-string first-key))
+         (insertp (plist-get properties :insert))
+         (deletep (plist-get properties :delete))
+         (insert-func (plist-get properties :insert-func))
+         (delete-func (plist-get properties :delete-func)))
+    `(progn
+       (define-key ,map ,fkeystr
+         (lambda () (interactive)
+           (evil-escape--escape
+            ,evil-escape-key-sequence
+            ',(if (plist-get properties :shadowed) (lookup-key evil-motion-state-map fkeystr))
+            ,insertp
+            ,deletep
+            ',command
+            ',insert-func
+            ',delete-func))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
@@ -118,46 +159,6 @@ with a key sequence."
     '(key-chord-define evil-lisp-state-map evil-escape-key-sequence nil))
   ;; isearch
   (define-key isearch-mode-map (kbd "f") 'isearch-printing-char))
-
-(defmacro evil-escape-define-escape (map command &rest properties)
-  "Define an escape in MAP keymap by executing COMMAND.
-
-`:insert BOOL'
-     If BOOL is not nil the first character of the escape sequence is inserted
-     in the buffer using `:insert-func' if the buffer is not read-only.
-
-`:delete BOOL'
-     If BOOL is not nil the first character is deleted using `:delete-func' if
-     the escape sequence succeeded.
-
-`:shadowed BOOL'
-     BOOL not nil indicates that the first key of the sequence shadows a
-     function. This function is looked-up from `evil-motion-state-map'.
-     Whenever the escape sequence does not succeed and BOOL is not nil
-     the shadowed function is called.
-
-`:insert-func FUNCTION'
-     Specify the insert function to call when inserting the first key.
-
-`:delete-func FUNCTION'
-     Specify the delete function to call when deleting the first key."
-  (let* ((first-key (elt evil-escape-key-sequence 0))
-         (fkeystr (char-to-string first-key))
-         (insertp (plist-get properties :insert))
-         (deletep (plist-get properties :delete))
-         (insert-func (plist-get properties :insert-func))
-         (delete-func (plist-get properties :delete-func)))
-    `(progn
-       (define-key ,map ,fkeystr
-         (lambda () (interactive)
-           (evil-escape--escape
-            ,evil-escape-key-sequence
-            ',(if (plist-get properties :shadowed) (lookup-key evil-motion-state-map fkeystr))
-            ,insertp
-            ,deletep
-            ',command
-            ',insert-func
-            ',delete-func))))))
 
 (defun evil-escape--default-insert-func (key)
   "Insert KEY in current buffer if not read only."
