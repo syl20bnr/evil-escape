@@ -53,8 +53,6 @@
   :prefix "evil-escape-"
   :group 'evil)
 
-(defvar evil-escape-key-sequence (kbd "fd")
-  "Two keys sequence to return to normal state.")
 (defcustom evil-escape-key-sequence (kbd "fd")
   "Two keys sequence to escape from insert state."
   :type 'key-sequence
@@ -215,3 +213,4 @@ DELETE-FUNC when calling CALLBACK. "
         (if shadowed-func (call-interactively shadowed-func)))))))
 
 (provide 'evil-escape)
+;;; evil-escape.el ends here
