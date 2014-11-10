@@ -32,9 +32,9 @@ If you don't, open `evil-escape.el` in Emacs and call
 
 ## Usage
 
-To toggle the `evil-escape` globally:
+To toggle the `evil-escape` mode globally:
 
-    M-x evil-escape
+    M-x evil-escape-mode
 
 ## Customization
 
