@@ -1,4 +1,5 @@
 # evil-escape
+[![MELPA](http://melpa.org/packages/evil-escape-badge.svg)](http://melpa.org/#/evil-escape)
 
 Customizable key sequence to escape from insert state and everything else in
 Emacs.
