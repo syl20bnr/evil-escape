@@ -5,7 +5,7 @@
 ;;;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.01
+;; Version: 1.02
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -27,6 +27,8 @@
 ;;; Commentary:
 
 ;; Press `fd` quickly to:
+;; ----------------------
+
 ;;   - escape from all evil states to normal state
 ;;   - escape from evil-lisp-state to normal state
 ;;   - abort evil ex command
@@ -37,8 +39,12 @@
 ;;   - hide neotree buffer
 ;; And more to come !
 
+;; Configuration:
+;; --------------
+
 ;; The key sequence can be customized with the variable
-;; `evil-escape-key-sequence`
+;; `evil-escape-key-sequence'
+;; It must be set before requiring evil-escape.
 
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
@@ -53,11 +59,11 @@
   :prefix "evil-escape-"
   :group 'evil)
 
-;;;###autoload
-(defcustom evil-escape-key-sequence (kbd "fd")
-  "Two keys sequence to escape from insert state."
-  :type 'key-sequence
-  :group 'evil-escape)
+(eval-and-compile
+  (defcustom evil-escape-key-sequence (kbd "fd")
+    "Two keys sequence to escape from insert state."
+    :type 'key-sequence
+    :group 'evil-escape))
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode

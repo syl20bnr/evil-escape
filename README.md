@@ -40,11 +40,9 @@ To toggle the `evil-escape` mode globally:
 
 ## Customization
 
-Open the customization group buffer:
+The key sequence can be customized with the variable `evil-escape-key-sequence`.
 
-    M-x customize-group RET evil-escape RET
-
-There you can change the key sequence to your desire.
-The default value is `fd`.
+**Note:** The variable `evil-escape-key-sequence` must be set before requiring
+`evil-escape`.
 
 [MELPA]: http://melpa.org/
