@@ -2,10 +2,10 @@
 
 ;; Copyright (C) 2014 syl20bnr
 ;;
-;;;; Author: Sylvain Benner <sylvain.benner@gmail.com>
+;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.02
+;; Version: 1.3
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -124,18 +124,22 @@ with a key sequence."
   "Set the key bindings to escape _everything!_"
   ;; use key-chord whenever it is possible
   ;; evil states
+  ;; insert state
   (key-chord-define evil-insert-state-map evil-escape-key-sequence 'evil-normal-state)
+  ;; emacs state
   (key-chord-define evil-emacs-state-map evil-escape-key-sequence
                     '(lambda () (interactive)
                        (cond ((string-match "magit" (symbol-name major-mode))
                               (setq unread-command-events (listify-key-sequence "q")))
                              (t  evil-normal-state))))
+  ;; visual state
   (key-chord-define evil-visual-state-map evil-escape-key-sequence 'evil-exit-visual-state)
-  (key-chord-define evil-motion-state-map evil-escape-key-sequence
-                    '(lambda () (interactive)
-                       (cond ((eq 'help-mode major-mode) (quit-window))
-                             ((eq 'neotree-mode major-mode) (neotree-hide))
-                             (t (evil-normal-state)))))
+  ;; motion state
+  (let ((exit-func (cond ((eq 'help-mode major-mode) 'quit-window)
+                         ((eq 'neotree-mode major-mode) 'neotree-hide)
+                         (t 'evil-normal-state))))
+    (eval `(evil-escape-define-escape evil-motion-state-map ,exit-func
+                                      :shadowed t)))
   ;; lisp state if installed
   (eval-after-load 'evil-lisp-state
     '(key-chord-define evil-lisp-state-map evil-escape-key-sequence 'evil-normal-state))
@@ -194,30 +198,32 @@ INSERT-FUNC.
 If DELETE? is not nil then the first key is deleted using the function
 DELETE-FUNC when calling CALLBACK. "
   :repeat nil
-  (let* ((modified (buffer-modified-p))
-         (insertf (if insert-func
-                      insert-func 'evil-escape--default-insert-func))
-         (deletef (if delete-func
-                      delete-func 'evil-escape--default-delete-func))
-         (fkey (elt keys 0))
-         (fkeystr (char-to-string fkey))
-         (skey (elt keys 1)))
-    (if insert? (funcall insertf fkey))
-    (let* ((evt (read-event nil nil key-chord-two-keys-delay)))
-      (cond
-       ((null evt)
-        (unless (eq 'insert evil-state)
-          (if shadowed-func (call-interactively shadowed-func))))
-       ((and (integerp evt)
-             (char-equal evt skey))
-        ;; remove the f character
-        (if delete? (funcall deletef))
-        (set-buffer-modified-p modified)
-        (funcall callback))
-       (t ; otherwise
-        (setq unread-command-events
-              (append unread-command-events (list evt)))
-        (if shadowed-func (call-interactively shadowed-func)))))))
+  (if (eq 'normal evil-state)
+      (call-interactively shadowed-func)
+    (let* ((modified (buffer-modified-p))
+           (insertf (if insert-func
+                        insert-func 'evil-escape--default-insert-func))
+           (deletef (if delete-func
+                        delete-func 'evil-escape--default-delete-func))
+           (fkey (elt keys 0))
+           (fkeystr (char-to-string fkey))
+           (skey (elt keys 1)))
+      (if insert? (funcall insertf fkey))
+      (let* ((evt (read-event nil nil key-chord-two-keys-delay)))
+        (cond
+         ((null evt)
+          (unless (eq 'insert evil-state)
+            (if shadowed-func (call-interactively shadowed-func))))
+         ((and (integerp evt)
+               (char-equal evt skey))
+          ;; remove the f character
+          (if delete? (funcall deletef))
+          (set-buffer-modified-p modified)
+          (funcall callback))
+         (t ; otherwise
+          (setq unread-command-events
+                (append unread-command-events (list evt)))
+          (if shadowed-func (call-interactively shadowed-func))))))))
 
 (provide 'evil-escape)
 ;;; evil-escape.el ends here
