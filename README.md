@@ -45,4 +45,12 @@ The key sequence can be customized with the variable `evil-escape-key-sequence`.
 **Note:** The variable `evil-escape-key-sequence` must be set before requiring
 `evil-escape`.
 
+## Known Bugs
+
+- `key-chord` with `evil` corrupts the display of the prefix argument in the
+echo area For instance entering `11` will display `1 1 1 -` instead of `1 1 -`.
+Only the display is affected, the prefix argument is not altered, more info:
+[bug entry][].
+
 [MELPA]: http://melpa.org/
+[bug entry]: https://bitbucket.org/lyro/evil/issue/365/key-chord-confuse-evils-minibuffer-echo
