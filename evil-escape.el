@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.3
+;; Version: 1.4
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -198,7 +198,7 @@ INSERT-FUNC.
 If DELETE? is not nil then the first key is deleted using the function
 DELETE-FUNC when calling CALLBACK. "
   :repeat nil
-  (if (eq 'normal evil-state)
+  (if (and shadowed-func (eq 'normal evil-state))
       (call-interactively shadowed-func)
     (let* ((modified (buffer-modified-p))
            (insertf (if insert-func
