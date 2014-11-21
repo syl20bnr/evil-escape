@@ -43,6 +43,9 @@ To toggle the `evil-escape` mode globally:
 
 The key sequence can be customized with the variable `evil-escape-key-sequence`.
 
+`evil-escape` is not compatible with sequences that start with `h j k or l` so
+avoid to define a sequence that starts with a navigation key.
+
 **Note:** The variable `evil-escape-key-sequence` must be set before requiring
 `evil-escape`.
 

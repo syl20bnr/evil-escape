@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.5.0
+;; Version: 1.5.1
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -46,6 +46,9 @@
 ;; The key sequence can be customized with the variable
 ;; `evil-escape-key-sequence'
 ;; It must be set before requiring evil-escape.
+
+;; `evil-escape' is not compatible with sequences that start with `h j k or l`
+;; so avoid to define a sequence that starts with a navigation key.
 
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
