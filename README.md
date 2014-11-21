@@ -14,6 +14,7 @@ Press `fd` quickly to:
 - abort isearch
 - quit magit buffers
 - quit help buffers
+- quit apropos buffers
 - hide neotree buffer
 
 And more to come !
