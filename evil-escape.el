@@ -135,9 +135,11 @@ with a key sequence."
   ;; visual state
   (key-chord-define evil-visual-state-map evil-escape-key-sequence 'evil-exit-visual-state)
   ;; motion state
-  (let ((exit-func (cond ((eq 'help-mode major-mode) 'quit-window)
-                         ((eq 'neotree-mode major-mode) 'neotree-hide)
-                         (t 'evil-normal-state))))
+  (let ((exit-func (lambda () (interactive)
+                     (cond ((or (eq 'apropos-mode major-mode)
+                                (eq 'help-mode major-mode)) (quit-window))
+                           ((eq 'neotree-mode major-mode) (neotree-hide))
+                           (t (evil-normal-state))))))
     (eval `(evil-escape-define-escape evil-motion-state-map ,exit-func
                                       :shadowed t)))
   ;; lisp state if installed
