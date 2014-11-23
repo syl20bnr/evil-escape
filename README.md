@@ -15,6 +15,7 @@ Press `fd` quickly to:
 - quit magit buffers
 - quit help buffers
 - quit apropos buffers
+- quit ert buffers
 - hide neotree buffer
 
 And more to come !

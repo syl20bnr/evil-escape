@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.5.1
+;; Version: 1.5.2
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -37,6 +37,7 @@
 ;;   - quit magit buffers
 ;;   - quit help buffers
 ;;   - quit apropos buffers
+;;   - quit ert buffers
 ;;   - hide neotree buffer
 ;; And more to come !
 
@@ -162,7 +163,10 @@ with a key sequence."
         (lookup-key evil-motion-state-map (evil-escape--first-key)))
   (let ((exit-func (lambda () (interactive)
                      (cond ((or (eq 'apropos-mode major-mode)
-                                (eq 'help-mode major-mode)) (quit-window))
+                                (eq 'help-mode major-mode)
+                                (eq 'ert-results-mode major-mode)
+                                (eq 'ert-simple-view-mode major-mode))
+                            (quit-window))
                            ((eq 'neotree-mode major-mode) (neotree-hide))
                            (t (evil-normal-state))))))
     (eval `(evil-escape-define-escape evil-motion-state-map ,exit-func
