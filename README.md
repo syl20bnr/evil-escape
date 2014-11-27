@@ -16,6 +16,7 @@ Press `fd` quickly to:
 - quit help buffers
 - quit apropos buffers
 - quit ert buffers
+- quit undo-tree buffer
 - hide neotree buffer
 
 And more to come !
