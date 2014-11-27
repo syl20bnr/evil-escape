@@ -223,6 +223,12 @@ with a key sequence."
   (let* ((insertp (not buffer-read-only)))
     (delete-char -1)))
 
+(defun evil-escape--call-evil-function (func)
+  "Call the passed evil function appropriatly."
+  (if (eq 'inclusive (evil-get-command-property func :type))
+      (setq evil-this-type 'inclusive))
+  (call-interactively shadowed-func))
+
 (evil-define-command evil-escape--escape
   (keys shadowed-func insert? delete? callback &optional insert-func delete-func)
   "Execute the passed CALLBACK using KEYS. KEYS is a cons cell of 2 characters.
@@ -238,7 +244,7 @@ If DELETE? is not nil then the first key is deleted using the function
 DELETE-FUNC when calling CALLBACK. "
   :repeat nil
   (if (and shadowed-func (eq 'normal evil-state))
-      (call-interactively shadowed-func)
+      (evil-escape--call-evil-function shadowed-func)
     (let* ((modified (buffer-modified-p))
            (insertf (if insert-func
                         insert-func 'evil-escape--default-insert-func))
@@ -252,7 +258,7 @@ DELETE-FUNC when calling CALLBACK. "
         (cond
          ((null evt)
           (unless (eq 'insert evil-state)
-            (if shadowed-func (call-interactively shadowed-func))))
+            (if shadowed-func (evil-escape--call-evil-function shadowed-func))))
          ((and (integerp evt)
                (char-equal evt skey))
           ;; remove the f character
@@ -262,7 +268,8 @@ DELETE-FUNC when calling CALLBACK. "
          (t ; otherwise
           (setq unread-command-events
                 (append unread-command-events (list evt)))
-          (if shadowed-func (call-interactively shadowed-func))))))))
+          (if shadowed-func (evil-escape--call-evil-function shadowed-func)))))
+      )))
 
 (provide 'evil-escape)
 ;;; evil-escape.el ends here
