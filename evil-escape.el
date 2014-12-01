@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.6.0
+;; Version: 1.6.1
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -98,11 +98,12 @@ with a key sequence."
                  evil-escape-key-sequence))
     (evil-escape--undefine-keys)))
 
-(defun evil-escape--first-key ()
-  "Return the first key string in the key sequence."
-  (let* ((first-key (elt evil-escape-key-sequence 0))
-         (fkeystr (char-to-string first-key)))
-    fkeystr))
+(eval-and-compile
+  (defun evil-escape--first-key ()
+    "Return the first key string in the key sequence."
+    (let* ((first-key (elt evil-escape-key-sequence 0))
+           (fkeystr (char-to-string first-key)))
+      fkeystr)))
 
 (defmacro evil-escape-define-escape (map command &rest properties)
   "Define an escape in MAP keymap by executing COMMAND.
