@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 1.6.1
+;; Version: 1.6.2
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (key-chord "0.6"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -39,6 +39,8 @@
 ;;   - quit apropos buffers
 ;;   - quit ert buffers
 ;;   - quit undo-tree buffer
+;;   - quit paradox
+;;   - quit gist-list menu
 ;;   - hide neotree buffer
 ;; And more to come !
 
@@ -157,6 +159,10 @@ with a key sequence."
                     '(lambda () (interactive)
                        (cond ((string-match "magit" (symbol-name major-mode))
                               (setq unread-command-events (listify-key-sequence "q")))
+                             ((eq 'paradox-menu-mode major-mode)
+                              (paradox-quit-and-close))
+                             ((eq 'gist-list-menu-mode major-mode)
+                              (quit-window))
                              (t  evil-normal-state))))
   ;; visual state
   (key-chord-define evil-visual-state-map evil-escape-key-sequence 'evil-exit-visual-state)

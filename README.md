@@ -17,6 +17,8 @@ Press `fd` quickly to:
 - quit apropos buffers
 - quit ert buffers
 - quit undo-tree buffer
+- quit paradox
+- quit gist-list menu
 - hide neotree buffer
 
 And more to come !
