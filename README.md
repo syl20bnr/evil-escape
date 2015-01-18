@@ -2,10 +2,22 @@
 [![MELPA](http://melpa.org/packages/evil-escape-badge.svg)](http://melpa.org/#/evil-escape)
 [![MELPA Stable](http://stable.melpa.org/packages/evil-escape-badge.svg)](http://stable.melpa.org/#/evil-escape)
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
+**Table of Contents**
+
+- [evil-escape](#evil-escape)
+    - [Install](#install)
+    - [Usage](#usage)
+    - [Customization](#customization)
+        - [Key sequence](#key-sequence)
+        - [Delay between keys](#delay-between-keys)
+
+<!-- markdown-toc end -->
+
 Customizable key sequence to escape from insert state and everything else in
 Emacs.
 
-Press `fd` quickly to:
+Press quickly `fd` (or the 2-keys sequence of your choice) to:
 
 - escape from all evil states to normal state
 - escape from evil-lisp-state to normal state
@@ -45,20 +57,30 @@ To toggle the `evil-escape` mode globally:
 
 ## Customization
 
-The key sequence can be customized with the variable `evil-escape-key-sequence`.
+### Key sequence
 
-`evil-escape` is not compatible with sequences that start with `h j k or l` so
-avoid to define a sequence that starts with a navigation key.
+The key sequence can be customized with the variable `evil-escape-key-sequence`.
+For instance to change it for `jk`:
+
+```elisp
+(setq-default evil-escape-key-sequence "jk")
+```
 
 **Note:** The variable `evil-escape-key-sequence` must be set before requiring
 `evil-escape`.
 
-## Known Bugs
+### Delay between keys
 
-- `key-chord` with `evil` corrupts the display of the prefix argument in the
-echo area For instance entering `11` will display `1 1 1 -` instead of `1 1 -`.
-Only the display is affected, the prefix argument is not altered, more info:
-[bug entry][].
+The delay between the two key presses can be customized with the variable
+`evil-escape-delay`. The default value is `0.1`. If your key sequence is
+composed with the two same characters it is recommended to set the delay to
+`0.2`.
+
+```elisp
+(setq-default evil-escape-delay 0.2)
+```
+
+**Note:** The variable `evil-escape-delay` must be set before requiring
+`evil-escape`.
 
 [MELPA]: http://melpa.org/
-[bug entry]: https://bitbucket.org/lyro/evil/issue/365/key-chord-confuse-evils-minibuffer-echo
