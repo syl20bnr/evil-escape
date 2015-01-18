@@ -80,7 +80,7 @@
     :group 'evil-escape))
 
 (defvar evil-escape-motion-state-shadowed-func nil
-  "Original function of `evil-motion-state' shadowed by `evil-espace'.
+  "Original function of `evil-motion-state' shadowed by `evil-escape'.
 This variable is used to restore the original function bound to the
 first key of the escape key sequence when `evil-escape'
 mode is disabled.")
@@ -93,7 +93,7 @@ mode is disabled.")
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
-  "Buffer-local minor mode to escape insert state and everythin else
+  "Buffer-local minor mode to escape insert state and everything else
 with a key sequence."
   :lighter (:eval (concat " " evil-escape-key-sequence))
   :group 'evil
