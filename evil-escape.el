@@ -152,8 +152,12 @@ with a key sequence."
                                     ',insert-func
                                     ',delete-func)
              ;; not called by the user, i.e. called by a keyboard macro
-             (when (fboundp ',insert-func)
-               (funcall ',insert-func ,(evil-escape--first-key)))))))))
+             (cond
+              ((fboundp ',insert-func)
+               (funcall ',insert-func ,(evil-escape--first-key)))
+              ((fboundp ',shadowed-func)
+               (evil-escape--setup-emacs-state-passthrough)
+               (evil-escape--execute-shadowed-func ',shadowed-func)))))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
