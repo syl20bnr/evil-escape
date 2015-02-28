@@ -12,6 +12,8 @@
         - [Key sequence](#key-sequence)
         - [Delay between keys](#delay-between-keys)
     - [Limitations](#limitations)
+        - [Macro](#macro)
+        - [First key](#first-key)
 
 <!-- markdown-toc end -->
 
@@ -86,6 +88,12 @@ composed with the two same characters it is recommended to set the delay to
 `evil-escape`.
 
 ## Limitations
+
+### Macro
+
+`fd` cannot be used during macro recording, use regular `ESC` instead.
+
+### First key
 
 Due to the current implementation only the following characters can be used
 as the first character of the key sequence:
