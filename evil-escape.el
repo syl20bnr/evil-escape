@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.10
+;; Version: 2.11
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -58,6 +58,15 @@
 
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
+
+;; Limitations
+
+;; `fd' cannot be used during macro recording, use regular `ESC'
+;; instead.
+
+;; Due to the current implementation only the key declared in
+;; `evil-motion-state-map' can be used as the first character
+;; of the key sequence:
 
 ;;; Code:
 
