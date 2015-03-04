@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.11
+;; Version: 2.12
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -171,7 +171,8 @@ with a key sequence."
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
   (setq evil-escape-motion-state-shadowed-func
-        (lookup-key evil-motion-state-map (evil-escape--first-key)))
+        (or evil-escape-motion-state-shadowed-func
+            (lookup-key evil-motion-state-map (evil-escape--first-key))))
   ;; evil states
   ;; insert state
   (eval `(evil-escape-define-escape "insert-state" evil-insert-state-map evil-normal-state
@@ -213,7 +214,8 @@ with a key sequence."
                                     :delete-func evil-escape--default-delete-func))
   ;; isearch
   (setq evil-escape-isearch-shadowed-func
-        (lookup-key isearch-mode-map (evil-escape--first-key)))
+        (or evil-escape-isearch-shadowed-func
+            (lookup-key isearch-mode-map (evil-escape--first-key))))
   (eval `(evil-escape-define-escape "isearch" isearch-mode-map isearch-abort
                                     :insert t
                                     :delete t
@@ -224,7 +226,8 @@ with a key sequence."
   (eval-after-load 'evil-lisp-state
     '(progn
        (setq evil-escape-lisp-state-shadowed-func
-             (lookup-key evil-lisp-state-map (evil-escape--first-key)))
+             (or evil-escape-lisp-state-shadowed-func
+                 (lookup-key evil-lisp-state-map (evil-escape--first-key))))
        (eval `(evil-escape-define-escape "lisp-state" evil-lisp-state-map
                                          evil-normal-state
                                          :shadowed-func ,evil-escape-lisp-state-shadowed-func))))
