@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.12
+;; Version: 2.13
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -303,13 +303,15 @@ the underlying major or minor modes map.
 Once the command KEY passed through MAP the function HFUNC is removed
 from the `post-command-hook'."
   (if (lookup-key map key)
+      ;; first pass
       (define-key map key nil)
+    ;; second pass
     (let ((escape-func (evil-escape--escape-function-symbol from)))
       (define-key map key escape-func)
       (remove-hook 'post-command-hook hfunc))))
 
 (defun evil-escape--emacs-state-passthrough ()
-  "Allow next command KEY to pass through `evil-emcs-state-map'"
+  "Allow next command KEY to pass through `evil-emacs-state-map'"
   (evil-escape--passthrough "emacs-state"
                             (evil-escape--first-key)
                             evil-emacs-state-map
@@ -319,9 +321,11 @@ from the `post-command-hook'."
   "Setup a pass through for emacs state map"
   (when (eq 'emacs evil-state)
     (add-hook 'post-command-hook 'evil-escape--emacs-state-passthrough)
-    (setq unread-command-events
-          (append unread-command-events (listify-key-sequence
-                                         (evil-escape--first-key))))))
+    (unless (or (and (boundp 'isearch-mode) (symbol-value 'isearch-mode))
+                (minibufferp))
+      (setq unread-command-events
+            (append unread-command-events (listify-key-sequence
+                                           (evil-escape--first-key)))))))
 
 (defun evil-escape--escape
     (keys callback &optional shadowed-func insert-func delete-func)
@@ -361,5 +365,3 @@ DELETE-FUNC when calling CALLBACK. "
         (evil-escape--execute-shadowed-func shadowed-func))))))
 
 (provide 'evil-escape)
-
-;;; evil-escape.el ends here
