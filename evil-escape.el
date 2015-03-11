@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.13
+;; Version: 2.14
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -56,6 +56,9 @@
 ;; the variable `evil-escape-delay'. Default is `0.1'.
 ;; It must be set before requiring evil-escape.
 
+;; A major mode can be excluded by adding it to the list
+;; `evil-escape-excluded-major-modes'.
+
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
 
@@ -86,7 +89,13 @@
   (defcustom evil-escape-delay 0.1
     "Max time delay between the two key press to be considered successful."
     :type 'number
-    :group 'evil-escape))
+    :group 'evil-escape)
+
+  (defcustom evil-escape-excluded-major-modes '()
+    "Excluded major modes where escape sequences has no effect."
+    :type 'sexp
+    :group 'evil-escape)
+)
 
 (defvar evil-escape-motion-state-shadowed-func nil
   "Original function of `evil-motion-state' shadowed by `evil-espace'.
@@ -153,20 +162,27 @@ with a key sequence."
          (evil-define-motion ,(evil-escape--escape-function-symbol from)
            (count)
            ,@evil-func-props
-           ;; called by the user
-           (if (called-interactively-p 'interactive)
-               (evil-escape--escape ,evil-escape-key-sequence
-                                    ',command
-                                    ',shadowed-func
-                                    ',insert-func
-                                    ',delete-func)
-             ;; not called by the user, i.e. called by a keyboard macro
-             (cond
-              ((fboundp ',insert-func)
-               (funcall ',insert-func ,(evil-escape--first-key)))
-              ((fboundp ',shadowed-func)
-               (evil-escape--setup-emacs-state-passthrough)
-               (evil-escape--execute-shadowed-func ',shadowed-func)))))))))
+           (if (memq major-mode evil-escape-excluded-major-modes)
+               (progn
+                 ;; excluded major mode, passthrough
+                 (when (fboundp ',insert-func)
+                   (funcall ',insert-func ,(evil-escape--first-key)))
+                 (when (fboundp ',shadowed-func)
+                   (evil-escape--execute-shadowed-func ',shadowed-func)))
+             (if (called-interactively-p 'interactive)
+                 ;; called by the user
+                 (evil-escape--escape ,evil-escape-key-sequence
+                                      ',command
+                                      ',shadowed-func
+                                      ',insert-func
+                                      ',delete-func)
+               (cond
+                ;; not called by the user, i.e. called by a keyboard macro
+                ((fboundp ',insert-func)
+                 (funcall ',insert-func ,(evil-escape--first-key)))
+                ((fboundp ',shadowed-func)
+                 (evil-escape--setup-emacs-state-passthrough)
+                 (evil-escape--execute-shadowed-func ',shadowed-func))))))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
@@ -365,3 +381,5 @@ DELETE-FUNC when calling CALLBACK. "
         (evil-escape--execute-shadowed-func shadowed-func))))))
 
 (provide 'evil-escape)
+
+;;; evil-escape.el ends here

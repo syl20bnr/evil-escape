@@ -87,6 +87,11 @@ composed with the two same characters it is recommended to set the delay to
 **Note:** The variable `evil-escape-delay` must be set before requiring
 `evil-escape`.
 
+### Excluding a major mode
+
+A major mode can be excluded by adding it to the list
+`evil-escape-excluded-major-modes`.
+
 ## Limitations
 
 ### Macro
