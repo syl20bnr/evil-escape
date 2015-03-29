@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.14
+;; Version: 2.15
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -162,27 +162,17 @@ with a key sequence."
          (evil-define-motion ,(evil-escape--escape-function-symbol from)
            (count)
            ,@evil-func-props
-           (if (memq major-mode evil-escape-excluded-major-modes)
-               (progn
-                 ;; excluded major mode, passthrough
-                 (when (fboundp ',insert-func)
-                   (funcall ',insert-func ,(evil-escape--first-key)))
-                 (when (fboundp ',shadowed-func)
-                   (evil-escape--execute-shadowed-func ',shadowed-func)))
-             (if (called-interactively-p 'interactive)
-                 ;; called by the user
-                 (evil-escape--escape ,evil-escape-key-sequence
-                                      ',command
-                                      ',shadowed-func
-                                      ',insert-func
-                                      ',delete-func)
-               (cond
-                ;; not called by the user, i.e. called by a keyboard macro
-                ((fboundp ',insert-func)
-                 (funcall ',insert-func ,(evil-escape--first-key)))
-                ((fboundp ',shadowed-func)
-                 (evil-escape--setup-emacs-state-passthrough)
-                 (evil-escape--execute-shadowed-func ',shadowed-func))))))))))
+           (if (and (called-interactively-p 'interactive)
+                    (not (memq major-mode evil-escape-excluded-major-modes)))
+               ;; called by the user
+               (evil-escape--escape ,from
+                                    ',map
+                                    ,evil-escape-key-sequence
+                                    ',command
+                                    ',insert-func
+                                    ',delete-func)
+             ;; not called by the user (i.e. via a macro)
+             (evil-escape--setup-passthrough ,from ',map)))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
@@ -326,17 +316,16 @@ from the `post-command-hook'."
       (define-key map key escape-func)
       (remove-hook 'post-command-hook hfunc))))
 
-(defun evil-escape--emacs-state-passthrough ()
-  "Allow next command KEY to pass through `evil-emacs-state-map'"
-  (evil-escape--passthrough "emacs-state"
-                            (evil-escape--first-key)
-                            evil-emacs-state-map
-                            'evil-escape--emacs-state-passthrough))
-
-(defun evil-escape--setup-emacs-state-passthrough ()
-  "Setup a pass through for emacs state map"
-  (when (eq 'emacs evil-state)
-    (add-hook 'post-command-hook 'evil-escape--emacs-state-passthrough)
+(defun evil-escape--setup-passthrough (from map)
+  "Setup a pass through for the next command"
+  (let ((hfunc (intern (format "evil-escape--%s-passthrough" from))))
+    (eval `(defun ,hfunc ()
+             ,(format "Setup an evil-escape passthrough for wrapper %s" from)
+             (evil-escape--passthrough ,from
+                                       (evil-escape--first-key)
+                                       ,map
+                                       ',hfunc)))
+    (add-hook 'post-command-hook hfunc)
     (unless (or (and (boundp 'isearch-mode) (symbol-value 'isearch-mode))
                 (minibufferp))
       (setq unread-command-events
@@ -344,12 +333,8 @@ from the `post-command-hook'."
                                            (evil-escape--first-key)))))))
 
 (defun evil-escape--escape
-    (keys callback &optional shadowed-func insert-func delete-func)
+    (from map keys callback &optional insert-func delete-func)
   "Execute the passed CALLBACK using KEYS. KEYS is a cons cell of 2 characters.
-
-If the first key insertion shadowed a function then pass the shadowed function
-in SHADOWED-FUNC and it will be executed if the key sequence was not
- successfull.
 
 If INSERT-FUNC is not nil then the first key pressed is inserted using the
  function INSERT-FUNC.
@@ -364,8 +349,8 @@ DELETE-FUNC when calling CALLBACK. "
     (let* ((evt (read-event nil nil evil-escape-delay)))
       (cond
        ((null evt)
-        (evil-escape--setup-emacs-state-passthrough)
-        (evil-escape--execute-shadowed-func shadowed-func))
+        (unless insert-func
+          (evil-escape--setup-passthrough from map)))
        ((and (integerp evt)
              (char-equal evt skey))
         ;; remove the f character
@@ -375,10 +360,9 @@ DELETE-FUNC when calling CALLBACK. "
         (setq overriding-terminal-local-map nil)
         (call-interactively callback))
        (t ; otherwise
-        (evil-escape--setup-emacs-state-passthrough)
+        (evil-escape--setup-passthrough from map)
         (setq unread-command-events
-              (append unread-command-events (list evt)))
-        (evil-escape--execute-shadowed-func shadowed-func))))))
+              (append unread-command-events (list evt))))))))
 
 (provide 'evil-escape)
 
