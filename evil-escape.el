@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.15
+;; Version: 2.16
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -183,7 +183,7 @@ with a key sequence."
   ;; insert state
   (eval `(evil-escape-define-escape "insert-state" evil-insert-state-map evil-normal-state
                                     :insert-func evil-escape--insert-state-insert-func
-                                    :delete-func evil-escape--default-delete-func))
+                                    :delete-func evil-escape--insert-state-delete-func))
   ;; emacs state
   (let ((exit-func (lambda () (interactive)
                      (cond ((string-match "magit" (symbol-name major-mode))
@@ -287,13 +287,16 @@ with a key sequence."
   "Delete char in current buffer if not read only."
   (when (not buffer-read-only) (delete-char -1)))
 
+(defun evil-escape--insert-state-delete-func ()
+  "Take care of term-mode."
+  (interactive)
+  (cond ((eq 'term-mode major-mode)
+         (call-interactively 'term-send-backspace))
+        (t (evil-escape--default-delete-func))))
+
 (defun evil-escape--escape-with-q ()
   "Send `q' key press event to exit from a buffer."
   (setq unread-command-events (listify-key-sequence "q")))
-
-(defun evil-escape--term-insert-func (key)
-  "Insert KEY in current term buffer."
-  (term-send-raw))
 
 (defun evil-escape--execute-shadowed-func (func)
   "Execute the passed FUNC if the context allows it."
