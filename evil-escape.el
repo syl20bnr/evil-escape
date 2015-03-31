@@ -169,10 +169,11 @@ with a key sequence."
                                     ',map
                                     ,evil-escape-key-sequence
                                     ',command
+                                    ',shadowed-func
                                     ',insert-func
                                     ',delete-func)
              ;; not called by the user (i.e. via a macro)
-             (evil-escape--setup-passthrough ,from ',map)))))))
+             (evil-escape--setup-passthrough ,from ',map ',shadowed-func)))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
@@ -306,29 +307,30 @@ with a key sequence."
               (minibufferp))
     (call-interactively func)))
 
-(defun evil-escape--passthrough (from key map hfunc)
+(defun evil-escape--passthrough (from key map shadowed passthrough)
   "Allow the next command KEY to pass through MAP so they can reach
 the underlying major or minor modes map.
 Once the command KEY passed through MAP the function HFUNC is removed
 from the `post-command-hook'."
   (if (lookup-key map key)
       ;; first pass
-      (define-key map key nil)
+      (define-key map key shadowed)
     ;; second pass
     (let ((escape-func (evil-escape--escape-function-symbol from)))
       (define-key map key escape-func)
-      (remove-hook 'post-command-hook hfunc))))
+      (remove-hook 'post-command-hook passthrough))))
 
-(defun evil-escape--setup-passthrough (from map)
+(defun evil-escape--setup-passthrough (from map &optional shadowed-func)
   "Setup a pass through for the next command"
-  (let ((hfunc (intern (format "evil-escape--%s-passthrough" from))))
-    (eval `(defun ,hfunc ()
+  (let ((passthrough (intern (format "evil-escape--%s-passthrough" from))))
+    (eval `(defun ,passthrough ()
              ,(format "Setup an evil-escape passthrough for wrapper %s" from)
              (evil-escape--passthrough ,from
                                        (evil-escape--first-key)
                                        ,map
-                                       ',hfunc)))
-    (add-hook 'post-command-hook hfunc)
+                                       ',shadowed-func
+                                       ',passthrough)))
+    (add-hook 'post-command-hook passthrough)
     (unless (or (and (boundp 'isearch-mode) (symbol-value 'isearch-mode))
                 (minibufferp))
       (setq unread-command-events
@@ -336,8 +338,13 @@ from the `post-command-hook'."
                                            (evil-escape--first-key)))))))
 
 (defun evil-escape--escape
-    (from map keys callback &optional insert-func delete-func)
+    (from map keys callback
+          &optional shadowed-func insert-func delete-func)
   "Execute the passed CALLBACK using KEYS. KEYS is a cons cell of 2 characters.
+
+If the first key insertion shadowed a function then pass the shadowed function
+in SHADOWED-FUNC and it will be executed if the key sequence was not
+ successfull.
 
 If INSERT-FUNC is not nil then the first key pressed is inserted using the
  function INSERT-FUNC.
@@ -353,7 +360,7 @@ DELETE-FUNC when calling CALLBACK. "
       (cond
        ((null evt)
         (unless insert-func
-          (evil-escape--setup-passthrough from map)))
+          (evil-escape--setup-passthrough from map shadowed-func)))
        ((and (integerp evt)
              (char-equal evt skey))
         ;; remove the f character
@@ -364,7 +371,7 @@ DELETE-FUNC when calling CALLBACK. "
         (call-interactively callback))
        (t ; otherwise
         (unless insert-func
-          (evil-escape--setup-passthrough from map))
+          (evil-escape--setup-passthrough from map shadowed-func))
         (setq unread-command-events
               (append unread-command-events (list evt))))))))
 
