@@ -366,8 +366,9 @@ DELETE-FUNC when calling CALLBACK. "
         ;; remove the f character
         (if delete-func (funcall delete-func))
         (set-buffer-modified-p modified)
-        ;; disable any running transient map first
-        (setq overriding-terminal-local-map nil)
+        ;; disable running transient map
+        (unless (equal "isearch" from)
+          (setq overriding-terminal-local-map nil))
         (call-interactively callback))
        (t ; otherwise
         (unless insert-func
