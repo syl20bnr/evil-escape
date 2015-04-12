@@ -253,6 +253,13 @@ with a key sequence."
 (defun evil-escape--undefine-keys ()
   "Unset the key bindings defined in `evil-escape--define-keys'."
   (let ((first-key (evil-escape--first-key)))
+    ;; bulk undefine
+    (dolist (map '(evil-insert-state-map
+                   evil-emacs-state-map
+                   evil-visual-state-map
+                   minibuffer-local-map
+                   evil-ex-completion-map))
+      (define-key (eval map) first-key nil))
     ;; motion state
     (if evil-escape-motion-state-shadowed-func
         (define-key evil-motion-state-map
