@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.18
+;; Version: 2.19
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -42,6 +42,7 @@
 ;;   - quit undo-tree buffer
 ;;   - quit paradox
 ;;   - quit gist-list menu
+;;   - quit helm-ag-edit
 ;;   - hide neotree buffer
 ;; And more to come !
 
@@ -207,6 +208,9 @@ with a key sequence."
                             (quit-window))
                            ((eq 'undo-tree-visualizer-mode major-mode)
                             (undo-tree-visualizer-quit))
+                           ((and (fboundp 'helm-ag--edit-abort)
+                                 (string-equal "*helm-ag-edit*" (buffer-name)))
+                            (call-interactively 'helm-ag--edit-abort))
                            ((eq 'neotree-mode major-mode) (neotree-hide))
                            (t (evil-normal-state))))))
     (eval `(evil-escape-define-escape "motion-state" evil-motion-state-map ,exit-func

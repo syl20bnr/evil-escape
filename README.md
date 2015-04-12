@@ -35,6 +35,7 @@ Press quickly `fd` (or the 2-keys sequence of your choice) to:
 - quit undo-tree buffer
 - quit paradox
 - quit gist-list menu
+- quit helm-ag-edit
 - hide neotree buffer
 
 And more to come !
