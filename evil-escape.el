@@ -297,10 +297,12 @@ with a key sequence."
   (when (not buffer-read-only) (delete-char -1)))
 
 (defun evil-escape--insert-state-delete-func ()
-  "Take care of term-mode."
+  "Take care of term-mode and other weird modes."
   (interactive)
   (cond ((eq 'term-mode major-mode)
          (call-interactively 'term-send-backspace))
+        ((eq 'deft-mode major-mode)
+         (call-interactively 'deft-filter-increment))
         (t (evil-escape--default-delete-func))))
 
 (defun evil-escape--escape-with-q ()
