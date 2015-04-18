@@ -26,6 +26,7 @@ Press quickly `fd` (or the 2-keys sequence of your choice) to:
 - escape from evil-lisp-state to normal state
 - escape from evil-iedit-state to normal state
 - abort evil ex command
+- abort company
 - quit minibuffer
 - abort isearch
 - quit magit buffers

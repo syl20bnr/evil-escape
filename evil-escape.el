@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.19
+;; Version: 2.20
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -33,6 +33,7 @@
 ;;   - escape from evil-lisp-state to normal state
 ;;   - escape from evil-iedit-state to normal state
 ;;   - abort evil ex command
+;;   - abort company
 ;;   - quit minibuffer
 ;;   - abort isearch
 ;;   - quit magit buffers
@@ -225,11 +226,15 @@ with a key sequence."
         (or evil-escape-isearch-shadowed-func
             (lookup-key isearch-mode-map (evil-escape--first-key))))
   (eval `(evil-escape-define-escape "isearch" isearch-mode-map isearch-abort
-                                    :insert t
-                                    :delete t
                                     :shadowed-func ,evil-escape-isearch-shadowed-func
                                     :insert-func evil-escape--isearch-insert-func
                                     :delete-func isearch-delete-char))
+  ;; company
+  (eval-after-load 'company
+    '(eval `(evil-escape-define-escape "company" company-active-map company-abort
+                                       :insert-func evil-escape--default-insert-func
+                                       :delete-func evil-escape--default-delete-func)))
+
   ;; lisp state if installed
   (eval-after-load 'evil-lisp-state
     '(progn
@@ -258,8 +263,10 @@ with a key sequence."
                    evil-emacs-state-map
                    evil-visual-state-map
                    minibuffer-local-map
+                   company-active-map
                    evil-ex-completion-map))
-      (define-key (eval map) first-key nil))
+      (when (boundp map)
+        (define-key (eval map) first-key nil)))
     ;; motion state
     (if evil-escape-motion-state-shadowed-func
         (define-key evil-motion-state-map
@@ -268,7 +275,7 @@ with a key sequence."
     (if evil-escape-isearch-shadowed-func
         (define-key isearch-mode-map
           (kbd first-key) evil-escape-isearch-shadowed-func))
-    ;; list state
+    ;; lisp state
     (if evil-escape-lisp-state-shadowed-func
         (define-key evil-lisp-state-map
           (kbd first-key) evil-escape-lisp-state-shadowed-func))
@@ -365,16 +372,19 @@ DELETE-FUNC when calling CALLBACK. "
          (fkey (elt keys 0))
          (fkeystr (char-to-string fkey))
          (skey (elt keys 1)))
-    (if insert-func (funcall insert-func fkey))
+    (when insert-func (funcall insert-func fkey))
     (let* ((evt (read-event nil nil evil-escape-delay)))
       (cond
        ((null evt)
+        (when (equal "insert-state" from)
+          ;; required if we want company completion menu to popup
+          (setq this-command 'self-insert-command))
         (unless insert-func
           (evil-escape--setup-passthrough from map shadowed-func)))
        ((and (integerp evt)
              (char-equal evt skey))
         ;; remove the f character
-        (if delete-func (funcall delete-func))
+        (when delete-func (funcall delete-func))
         (set-buffer-modified-p modified)
         ;; disable running transient map
         (unless (equal "isearch" from)
