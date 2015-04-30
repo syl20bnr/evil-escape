@@ -364,9 +364,13 @@ DELETE-FUNC when calling CALLBACK. "
   (let* ((modified (buffer-modified-p))
          (fkey (elt keys 0))
          (fkeystr (char-to-string fkey))
-         (skey (elt keys 1)))
+         (skey (elt keys 1))
+         (hl-line-mode-before hl-line-mode))
     (if insert-func (funcall insert-func fkey))
+    ;; temporarily force line-mode locally to prevent flicker from read-event
+    (when (or global-hl-line-mode hl-line-mode) (hl-line-mode 1))
     (let* ((evt (read-event nil nil evil-escape-delay)))
+      (unless hl-line-mode-before (hl-line-mode -1))
       (cond
        ((null evt)
         (unless insert-func
