@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.21
+;; Version: 2.22
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -212,6 +212,10 @@ with a key sequence."
                            (t (evil-normal-state))))))
     (eval `(evil-escape-define-escape "motion-state" evil-motion-state-map ,exit-func
                                       :shadowed-func ,evil-escape-motion-state-shadowed-func)))
+  ;; replace state
+  (eval `(evil-escape-define-escape "replace-state" evil-replace-state-map evil-normal-state
+                                    :insert-func evil-escape--default-insert-func
+                                    :delete-func evil-escape--default-delete-func))
   ;; mini-buffer
   (eval `(evil-escape-define-escape "minibuffer" minibuffer-local-map abort-recursive-edit
                                     :insert-func evil-escape--default-insert-func
