@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.22
+;; Version: 2.23
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -112,6 +112,12 @@ mode is disabled.")
 
 (defvar evil-escape-lisp-state-shadowed-func nil
   "Original function of `evil-lisp-state-map' shadowed by `evil-escape'.
+This variable is used to restore the original function bound to the
+first key of the escape key sequence when `evil-escape'
+mode is disabled.")
+
+(defvar evil-escape-iedit-state-shadowed-func nil
+  "Original function of `evil-iedit-state-map' shadowed by `evil-escape'.
 This variable is used to restore the original function bound to the
 first key of the escape key sequence when `evil-escape'
 mode is disabled.")
@@ -246,9 +252,12 @@ with a key sequence."
   ;; iedit state if installed
   (eval-after-load 'evil-iedit-state
     '(progn
+       (setq evil-escape-iedit-state-shadowed-func
+             (or evil-escape-iedit-state-shadowed-func
+                 (lookup-key evil-iedit-state-map (evil-escape--first-key))))
        (eval `(evil-escape-define-escape "iedit-state" evil-iedit-state-map
                                          evil-iedit-state/quit-iedit-mode
-                                         :shadowed-func ,evil-escape-motion-state-shadowed-func))
+                                         :shadowed-func ,evil-escape-iedit-state-shadowed-func))
        (eval '(evil-escape-define-escape "iedit-insert-state" evil-iedit-insert-state-map
                                          evil-iedit-state/quit-iedit-mode
                                          :insert-func evil-escape--default-insert-func
@@ -278,7 +287,8 @@ with a key sequence."
           (kbd first-key) evil-escape-lisp-state-shadowed-func))
     ;; iedit state
     (eval-after-load 'evil-iedit-state
-      '(progn (define-key evil-iedit-state-map (kbd first-key) nil)
+      '(progn (define-key evil-iedit-state-map
+                (kbd first-key) evil-escape-iedit-state-shadowed-func)
               (define-key evil-iedit-insert-state-map (kbd first-key) nil)))))
 
 (defun evil-escape--default-insert-func (key)
@@ -326,9 +336,16 @@ with a key sequence."
 the underlying major or minor modes map.
 Once the command KEY passed through MAP the function HFUNC is removed
 from the `post-command-hook'."
-  (if (lookup-key map key)
+  (if evil-escape--first-pass
       ;; first pass
-      (define-key map key shadowed)
+      (progn
+        (if shadowed
+            (define-key map key shadowed)
+          ;; trick of the death, we remove the current binding
+          ;; in order to get the binding in the other active key maps
+          (define-key map key nil)
+          (define-key map key (key-binding key)))
+        (setq evil-escape--first-pass nil))
     ;; second pass
     (let ((escape-func (evil-escape--escape-function-symbol from)))
       (define-key map key escape-func)
@@ -344,9 +361,9 @@ from the `post-command-hook'."
                                        ,map
                                        ',shadowed-func
                                        ',passthrough)))
+    (setq evil-escape--first-pass t)
     (add-hook 'post-command-hook passthrough)
-    (unless (or (and (boundp 'isearch-mode) (symbol-value 'isearch-mode))
-                (minibufferp))
+    (unless (or (bound-and-true-p isearch-mode) (minibufferp))
       (setq unread-command-events
             (append unread-command-events (listify-key-sequence
                                            (evil-escape--first-key)))))))
