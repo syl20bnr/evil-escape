@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.24
+;; Version: 2.25
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -172,18 +172,20 @@ with a key sequence."
          (evil-define-motion ,(evil-escape--escape-function-symbol from)
            (count)
            ,@evil-func-props
-           (if (and (called-interactively-p 'interactive)
-                    (not (memq major-mode evil-escape-excluded-major-modes)))
-               ;; called by the user
-               (evil-escape--escape ,from
-                                    ',map
-                                    ,evil-escape-key-sequence
-                                    ',command
-                                    ',shadowed-func
-                                    ',insert-func
-                                    ',delete-func)
-             ;; not called by the user (i.e. via a macro)
-             (evil-escape--setup-passthrough ,from ',map ',shadowed-func)))))))
+           (if (eq 'operator evil-state)
+               (call-interactively ',shadowed-func)
+             (if (and (called-interactively-p 'interactive)
+                      (not (memq major-mode evil-escape-excluded-major-modes)))
+                 ;; called by the user
+                 (evil-escape--escape ,from
+                                      ',map
+                                      ,evil-escape-key-sequence
+                                      ',command
+                                      ',shadowed-func
+                                      ',insert-func
+                                      ',delete-func)
+               ;; not called by the user (i.e. via a macro)
+               (evil-escape--setup-passthrough ,from ',map ',shadowed-func))))))))
 
 (defun evil-escape--define-keys ()
   "Set the key bindings to escape _everything!_"
