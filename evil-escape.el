@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.25
+;; Version: 2.26
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -171,6 +171,7 @@ with a key sequence."
        (define-key ,map ,(evil-escape--first-key)
          (evil-define-motion ,(evil-escape--escape-function-symbol from)
            (count)
+           ,(format "evil-escape wrapper function for `%s'." command)
            ,@evil-func-props
            (if (eq 'operator evil-state)
                (call-interactively ',shadowed-func)
