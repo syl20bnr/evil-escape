@@ -204,6 +204,20 @@ with a key sequence."
   (eval `(evil-escape-define-escape "insert-state" evil-insert-state-map evil-normal-state
                                     :insert-func evil-escape--insert-state-insert-func
                                     :delete-func evil-escape--insert-state-delete-func))
+
+  ;; lispy-special state if installed
+  (eval-after-load 'lispy
+    '(progn
+       (setq evil-escape-lispy-special-shadowed-func
+             (or evil-escape-lispy-special-shadowed-func
+                 (lookup-key evil-evilified-state-map (evil-escape--first-key))))
+       (eval `(evil-escape-define-escape
+               "insert-state" lispy-mode-map-special
+               evil-normal-state
+               :insert-func special-lispy-flow
+               :delete-func special-lispy-back
+               :shadowed-func ,evil-escape-lispy-special-shadowed-func))))
+
   ;; emacs state
   (eval `(evil-escape-define-escape "emacs-state" evil-emacs-state-map
                                     evil-escape--emacs-state-exit-func))
@@ -296,29 +310,34 @@ with a key sequence."
                    evil-iedit-insert-state-map
                    minibuffer-local-map
                    isearch-mode-map
-                   evil-ex-completion-map))
+                   evil-ex-completion-map
+                   lispy-mode-map-special))
       (define-key (eval map) first-key nil))
     ;; motion state
     (when evil-escape-motion-state-shadowed-func
-        (define-key evil-motion-state-map
-          (kbd first-key) evil-escape-motion-state-shadowed-func))
+      (define-key evil-motion-state-map
+        (kbd first-key) evil-escape-motion-state-shadowed-func))
     ;; isearch
     (when evil-escape-isearch-shadowed-func
-        (define-key isearch-mode-map
-          (kbd first-key) evil-escape-isearch-shadowed-func))
+      (define-key isearch-mode-map
+        (kbd first-key) evil-escape-isearch-shadowed-func))
     ;; list state
     (when evil-escape-lisp-state-shadowed-func
-        (define-key evil-lisp-state-map
-          (kbd first-key) evil-escape-lisp-state-shadowed-func))
+      (define-key evil-lisp-state-map
+        (kbd first-key) evil-escape-lisp-state-shadowed-func))
     ;; evilified state
     (when evil-escape-evilified-state-shadowed-func
-        (define-key evil-evilified-state-map
-          (kbd first-key) evil-escape-evilified-state-shadowed-func))
+      (define-key evil-evilified-state-map
+        (kbd first-key) evil-escape-evilified-state-shadowed-func))
     ;; iedit state
     (when evil-escape-iedit-state-shadowed-func
       (define-key evil-iedit-state-map
         (kbd first-key) evil-escape-iedit-state-shadowed-func)
-      (define-key evil-iedit-insert-state-map (kbd first-key) nil))))
+      (define-key evil-iedit-insert-state-map (kbd first-key) nil))
+    ;; lispy special
+    (when evil-escape-lispy-special-shadowed-func
+      (define-key lispy-mode-map-special
+        (kbd first-key) evil-escape-lispy-special-shadowed-func))))
 
 (defun evil-escape--default-insert-func (key)
   "Insert KEY in current buffer if not read only."
