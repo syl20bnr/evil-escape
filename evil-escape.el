@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.26
+;; Version: 2.27
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -416,10 +416,13 @@ DELETE-FUNC when calling CALLBACK. "
          (fkey (elt keys 0))
          (fkeystr (char-to-string fkey))
          (skey (elt keys 1))
-         (hl-line-mode-before hl-line-mode))
+         (hl-line-mode-before (when (boundp 'hl-line-mode) hl-line-mode)))
     (if insert-func (funcall insert-func fkey))
-    ;; temporarily force line-mode locally to prevent flicker from read-event
-    (when (or global-hl-line-mode hl-line-mode) (hl-line-mode 1))
+    ;; global-hl-line-mode seems to be deactivated when `read-event' so we
+    ;; temporarily force line-mode locally to prevent flicker
+    (when (or (bound-and-true-p global-hl-line-mode)
+              (bound-and-true-p hl-line-mode))
+      (hl-line-mode))
     (let* ((evt (read-event nil nil evil-escape-delay)))
       (unless hl-line-mode-before (hl-line-mode -1))
       (cond
