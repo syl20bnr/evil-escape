@@ -314,9 +314,9 @@ with a key sequence."
         (kbd first-key) evil-escape-iedit-state-shadowed-func)
       (define-key evil-iedit-insert-state-map (kbd first-key) nil))))
 
-(defun evil-escape--default-insert-func (key)
-  "Insert KEY in current buffer if not read only."
-  (when (not buffer-read-only) (insert key)))
+(defun evil-escape--default-insert-func (_)
+  "Insert typed char in current buffer if not read only."
+  (when (not buffer-read-only) (self-insert-command 1)))
 
 (defun evil-escape--insert-state-insert-func (key)
   "Take care of term-mode."
