@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.27
+;; Version: 2.28
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -127,6 +127,10 @@ mode is disabled.")
 This variable is used to restore the original function bound to the
 first key of the escape key sequence when `evil-escape'
 mode is disabled.")
+
+(defvar evil-escape-inhibit nil
+  "If non nil then evil-escape does nothing. This variable is used to
+support functions which wrap evil-escape.")
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
@@ -379,6 +383,7 @@ from the `post-command-hook'."
         (setq evil-escape--first-pass nil))
     ;; second pass
     (evil-escape--define-keys)
+    (setq evil-escape-inhibit nil)
     (remove-hook 'post-command-hook passthrough)))
 
 (defun evil-escape--setup-passthrough (from map &optional shadowed-func)
@@ -391,7 +396,8 @@ from the `post-command-hook'."
                                        ,map
                                        ',shadowed-func
                                        ',passthrough)))
-    (setq evil-escape--first-pass t)
+    (setq evil-escape--first-pass t
+          evil-escape-inhibit t)
     (add-hook 'post-command-hook passthrough)
     (unless (or (bound-and-true-p isearch-mode) (minibufferp))
       (setq unread-command-events
@@ -417,32 +423,33 @@ DELETE-FUNC when calling CALLBACK. "
          (fkeystr (char-to-string fkey))
          (skey (elt keys 1))
          (hl-line-mode-before (when (boundp 'hl-line-mode) hl-line-mode)))
-    (if insert-func (funcall insert-func fkey))
-    ;; global-hl-line-mode seems to be deactivated when `read-event' so we
-    ;; temporarily force line-mode locally to prevent flicker
-    (when (or (bound-and-true-p global-hl-line-mode)
-              (bound-and-true-p hl-line-mode))
-      (hl-line-mode))
-    (let* ((evt (read-event nil nil evil-escape-delay)))
-      (unless hl-line-mode-before (hl-line-mode -1))
-      (cond
-       ((null evt)
-        (unless insert-func
-          (evil-escape--setup-passthrough from map shadowed-func)))
-       ((and (integerp evt)
-             (char-equal evt skey))
-        ;; remove the f character
-        (if delete-func (funcall delete-func))
-        (set-buffer-modified-p modified)
-        ;; disable running transient map
-        (unless (equal "isearch" from)
-          (setq overriding-terminal-local-map nil))
-        (call-interactively callback))
-       (t ; otherwise
-        (unless insert-func
-          (evil-escape--setup-passthrough from map shadowed-func))
-        (setq unread-command-events
-              (append unread-command-events (list evt))))))))
+    (unless evil-escape-inhibit
+      (if insert-func (funcall insert-func fkey))
+      ;; global-hl-line-mode seems to be deactivated when `read-event' so we
+      ;; temporarily force line-mode locally to prevent flicker
+      (when (or (bound-and-true-p global-hl-line-mode)
+                (bound-and-true-p hl-line-mode))
+        (hl-line-mode))
+      (let* ((evt (read-event nil nil evil-escape-delay)))
+        (unless hl-line-mode-before (hl-line-mode -1))
+        (cond
+         ((null evt)
+          (unless insert-func
+            (evil-escape--setup-passthrough from map shadowed-func)))
+         ((and (integerp evt)
+               (char-equal evt skey))
+          ;; remove the f character
+          (if delete-func (funcall delete-func))
+          (set-buffer-modified-p modified)
+          ;; disable running transient map
+          (unless (equal "isearch" from)
+            (setq overriding-terminal-local-map nil))
+          (call-interactively callback))
+         (t ; otherwise
+          (unless insert-func
+            (evil-escape--setup-passthrough from map shadowed-func))
+          (setq unread-command-events
+                (append unread-command-events (list evt)))))))))
 
 (provide 'evil-escape)
 
