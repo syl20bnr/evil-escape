@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 2.28
+;; Version: 2.29
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -295,7 +295,8 @@ with a key sequence."
                    minibuffer-local-map
                    isearch-mode-map
                    evil-ex-completion-map))
-      (define-key (eval map) first-key nil))
+      (when (boundp map)
+        (define-key (eval map) first-key nil)))
     ;; motion state
     (when evil-escape-motion-state-shadowed-func
         (define-key evil-motion-state-map
