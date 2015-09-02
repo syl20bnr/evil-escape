@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.02
+;; Version: 3.03
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -118,8 +118,7 @@ with a key sequence."
   (and (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
-           (and (not (eq evil-state 'normal))
-                (not (eq evil-state 'motion))))
+           (not (eq evil-state 'normal)))
        (not (memq major-mode evil-escape-excluded-major-modes))
        (equal (this-command-keys) (evil-escape--first-key))))
 
