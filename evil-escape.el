@@ -195,7 +195,6 @@ with a key sequence."
                (_ (evil-escape--insert-func))) t)
     (`normal
      (when (window-minibuffer-p) (evil-escape--insert-func) t))
-    (`replace (evil-escape--insert-func) t)
     (`iedit-insert (evil-escape--insert-func) t)))
 
 (defun evil-escape--delete ()
@@ -208,7 +207,6 @@ with a key sequence."
                (_ (evil-escape--default-delete-func))))
     (`normal
      (when (minibuffer-window-active-p (evil-escape--default-delete-func))))
-    (`replace (evil-escape--default-delete-func))
     (`iedit-insert (evil-escape--default-delete-func))))
 
 (defun evil-escape--escape-with-q ()
