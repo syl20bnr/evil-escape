@@ -2,7 +2,7 @@
 [![MELPA](http://melpa.org/packages/evil-escape-badge.svg)](http://melpa.org/#/evil-escape)
 [![MELPA Stable](http://stable.melpa.org/packages/evil-escape-badge.svg)](http://stable.melpa.org/#/evil-escape)
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc/generate-toc again -->
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
 **Table of Contents**
 
 - [evil-escape](#evil-escape)
@@ -11,6 +11,8 @@
     - [Customization](#customization)
         - [Key sequence](#key-sequence)
         - [Delay between keys](#delay-between-keys)
+        - [Excluding a major mode](#excluding-a-major-mode)
+        - [Enable only for a list of major modes](#enable-only-for-a-list-of-major-modes)
 
 <!-- markdown-toc end -->
 
@@ -87,5 +89,12 @@ composed with the two same characters it is recommended to set the delay to
 
 A major mode can be excluded by adding it to the list
 `evil-escape-excluded-major-modes`.
+
+### Enable only for a list of major modes
+
+It is also possible to provide an inclusive list of major modes
+with the variable `evil-escape-enable-only-for-major-modes`. When this list
+non-nil then evil-escape is enabled only for the major-modes contained in the
+list.
 
 [MELPA]: http://melpa.org/

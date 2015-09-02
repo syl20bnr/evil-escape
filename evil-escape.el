@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.03
+;; Version: 3.04
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -58,6 +58,11 @@
 ;; A major mode can be excluded by adding it to the list
 ;; `evil-escape-excluded-major-modes'.
 
+;; It is also possible to provide an inclusive list of major modes
+;; with the variable `evil-escape-enable-only-for-major-modes'. When this list
+;; non-nil then evil-escape is enabled only for the major-modes contained in the
+;; list.
+
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
 
@@ -80,8 +85,13 @@
   :type 'number
   :group 'evil-escape)
 
-(defcustom evil-escape-excluded-major-modes '()
+(defcustom evil-escape-excluded-major-modes nil
   "Excluded major modes where escape sequences has no effect."
+  :type 'sexp
+  :group 'evil-escape)
+
+(defcustom evil-escape-enable-only-for-major-modes nil
+  "List of major modes where evil-escape is enabled."
   :type 'sexp
   :group 'evil-escape)
 
@@ -120,6 +130,8 @@ with a key sequence."
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (not (eq evil-state 'normal)))
        (not (memq major-mode evil-escape-excluded-major-modes))
+       (or (not evil-escape-enable-only-for-major-modes)
+           (memq major-mode evil-escape-enable-only-for-major-modes))
        (equal (this-command-keys) (evil-escape--first-key))))
 
 (defun evil-escape--escape ()
