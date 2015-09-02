@@ -102,17 +102,14 @@ with a key sequence."
     (let ((inserted (evil-escape--insert))
           (skey (elt evil-escape-key-sequence 1))
           (evt (read-event nil nil evil-escape-delay)))
+      (when inserted (evil-escape--delete))
       (cond
-       ((null evt)
-        (when inserted (evil-escape--delete)))
        ((and (integerp evt) (char-equal evt skey))
-        (when inserted (evil-escape--delete))
         (evil-escape--escape)
         (setq this-command 'ignore))
-       (t
-        (when inserted (evil-escape--delete))
-        (setq unread-command-events
-              (append unread-command-events (list evt))))))))
+       ((null evt))
+       (t (setq unread-command-events
+                (append unread-command-events (list evt))))))))
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape should run."
