@@ -11,14 +11,15 @@
     - [Customization](#customization)
         - [Key sequence](#key-sequence)
         - [Delay between keys](#delay-between-keys)
-    - [Limitations](#limitations)
-        - [Macro](#macro)
-        - [First key](#first-key)
 
 <!-- markdown-toc end -->
 
 Customizable key sequence to escape from insert state and everything else in
 Emacs.
+
+Version 3.0 is a rewrite of `evil-escape` and removes the previous limitations:
+- escape sequence can now be used in macros
+- there is no limitation on the choice of key for the first key of the sequence.
 
 Press quickly `fd` (or the 2-keys sequence of your choice) to:
 
@@ -45,7 +46,7 @@ Contributions to support more buffers are _very welcome_:
 
 ## Install
 
-The package _will be available soon_ in [MELPA][].
+The package is available in [MELPA][].
 
 If you have MELPA in `package-archives`, use
 
@@ -71,9 +72,6 @@ For instance to change it for `jk`:
 (setq-default evil-escape-key-sequence "jk")
 ```
 
-**Note:** The variable `evil-escape-key-sequence` must be set before requiring
-`evil-escape`.
-
 ### Delay between keys
 
 The delay between the two key presses can be customized with the variable
@@ -85,66 +83,9 @@ composed with the two same characters it is recommended to set the delay to
 (setq-default evil-escape-delay 0.2)
 ```
 
-**Note:** The variable `evil-escape-delay` must be set before requiring
-`evil-escape`.
-
 ### Excluding a major mode
 
 A major mode can be excluded by adding it to the list
 `evil-escape-excluded-major-modes`.
-
-## Limitations
-
-### Macro
-
-`fd` cannot be used during macro recording, use regular `ESC` instead.
-
-### First key
-
-Due to the current implementation only the following characters can be used
-as the first character of the key sequence:
-
-|   Keys     |
-|:----------:|
-|<kbd>b</kbd>|
-|<kbd>B</kbd>|
-|<kbd>e</kbd>|
-|<kbd>E</kbd>|
-|<kbd>f</kbd>|
-|<kbd>F</kbd>|
-|<kbd>G</kbd>|
-|<kbd>h</kbd>|
-|<kbd>H</kbd>|
-|<kbd>j</kbd>|
-|<kbd>k</kbd>|
-|<kbd>l</kbd>|
-|<kbd> </kbd>|
-|<kbd>K</kbd>|
-|<kbd>L</kbd>|
-|<kbd>M</kbd>|
-|<kbd>n</kbd>|
-|<kbd>N</kbd>|
-|<kbd>t</kbd>|
-|<kbd>T</kbd>|
-|<kbd>w</kbd>|
-|<kbd>W</kbd>|
-|<kbd>{</kbd>|
-|<kbd>}</kbd>|
-|<kbd>#</kbd>|
-|<kbd>%</kbd>|
-|<kbd>`</kbd>|
-|<kbd>'</kbd>|
-|<kbd>(</kbd>|
-|<kbd>)</kbd>|
-|<kbd>*</kbd>|
-|<kbd>,</kbd>|
-|<kbd>/</kbd>|
-|<kbd>;</kbd>|
-|<kbd>?</kbd>|
-|<kbd>|</kbd>|
-|<kbd>^</kbd>|
-|<kbd>+</kbd>|
-|<kbd>_</kbd>|
-|<kbd>-</kbd>|
 
 [MELPA]: http://melpa.org/
