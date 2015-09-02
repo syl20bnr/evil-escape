@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.04
+;; Version: 3.05
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -58,10 +58,15 @@
 ;; A major mode can be excluded by adding it to the list
 ;; `evil-escape-excluded-major-modes'.
 
-;; It is also possible to provide an inclusive list of major modes
-;; with the variable `evil-escape-enable-only-for-major-modes'. When this list
-;; non-nil then evil-escape is enabled only for the major-modes contained in the
-;; list.
+;; An inclusive list of major modes can defined with the variable
+;; `evil-escape-enable-only-for-major-modes'. When this list is
+;; non-nil then evil-escape is enabled only for the major-modes
+;; in the list.
+
+;; It is possible to bind `evil-escape' function directly, for
+;; instance to execute evil-escape with `C-c C-g':
+
+;; (global-set-key (kbd "C-c C-g") 'evil-escape)
 
 ;; More information in the readme of the repository:
 ;; https://github.com/syl20bnr/evil-escape
@@ -106,6 +111,21 @@ with a key sequence."
       (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
+(defun evil-escape ()
+  "Escape from everything... well almost everything."
+  (interactive)
+  (pcase evil-state
+    (`normal (evil-escape--escape-normal-state))
+    (`motion (evil-escape--escape-motion-state))
+    (`insert (evil-normal-state))
+    (`emacs (evil-escape--escape-emacs-state))
+    (`evilified (evil-escape--escape-emacs-state))
+    (`visual (evil-exit-visual-state))
+    (`replace (evil-normal-state))
+    (`lisp (evil-normal-state))
+    (`iedit (evil-iedit-state/quit-iedit-mode))
+    (`iedit-insert (evil-iedit-state/quit-iedit-mode))))
+
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (when (evil-escape-p)
@@ -117,14 +137,14 @@ with a key sequence."
       (set-buffer-modified-p modified)
       (cond
        ((and (integerp evt) (char-equal evt skey))
-        (evil-escape--escape)
+        (evil-escape)
         (setq this-command 'ignore))
        ((null evt))
        (t (setq unread-command-events
                 (append unread-command-events (list evt))))))))
 
 (defun evil-escape-p ()
-  "Return non-nil if evil-escape should run."
+  "Return non-nil if evil-escape can run."
   (and (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
@@ -133,21 +153,6 @@ with a key sequence."
        (or (not evil-escape-enable-only-for-major-modes)
            (memq major-mode evil-escape-enable-only-for-major-modes))
        (equal (this-command-keys) (evil-escape--first-key))))
-
-(defun evil-escape--escape ()
-  "Escape from everything... well almost everything."
-  (pcase evil-state
-    (`normal (evil-escape--escape-normal-state))
-    (`motion (evil-escape--escape-motion-state))
-    (`insert (evil-normal-state))
-    (`emacs (evil-escape--escape-emacs-state))
-    (`evilified (evil-escape--escape-emacs-state))
-    (`visual (evil-exit-visual-state))
-    (`replace (evil-normal-state))
-    (`lisp (evil-normal-state))
-    (`iedit (evil-iedit-state/quit-iedit-mode))
-    (`iedit-insert (evil-iedit-state/quit-iedit-mode))
-    (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape--escape-normal-state ()
   "Escape from normal state."

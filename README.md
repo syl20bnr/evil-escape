@@ -13,6 +13,7 @@
         - [Delay between keys](#delay-between-keys)
         - [Excluding a major mode](#excluding-a-major-mode)
         - [Enable only for a list of major modes](#enable-only-for-a-list-of-major-modes)
+        - [Assign a key binding directly](#assign-a-key-binding-directly)
 
 <!-- markdown-toc end -->
 
@@ -92,9 +93,17 @@ A major mode can be excluded by adding it to the list
 
 ### Enable only for a list of major modes
 
-It is also possible to provide an inclusive list of major modes
-with the variable `evil-escape-enable-only-for-major-modes`. When this list
-non-nil then evil-escape is enabled only for the major-modes contained in the
-list.
+An inclusive list of major modes can defined with the variable
+`evil-escape-enable-only-for-major-modes`. When this list is non-nil
+then evil-escape is enabled only for the major-modes in the list.
+
+### Assign a key binding directly
+
+It is possible to bind `evil-escape' function directly`, for
+instance to execute evil-escape with <kbd>C-c C-g</kbd>:
+
+```elisp
+(global-set-key (kbd "C-c C-g") 'evil-escape)
+```
 
 [MELPA]: http://melpa.org/
