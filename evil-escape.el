@@ -76,7 +76,7 @@
   :group 'evil-escape)
 
 (defcustom evil-escape-delay 0.1
-  "Max time delemacs-lisp-modeay between the two key press to be considered successful."
+  "Max time delay between two key presses."
   :type 'number
   :group 'evil-escape)
 
