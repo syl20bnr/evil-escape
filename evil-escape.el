@@ -97,7 +97,7 @@ with a key sequence."
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape-pre-command-hook ()
-  ""
+  "evil-escape pre-command hook."
   (when (evil-escape-p)
     (let ((inserted (evil-escape--insert)))
       (let ((skey (elt evil-escape-key-sequence 1))
