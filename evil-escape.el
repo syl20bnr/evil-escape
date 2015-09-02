@@ -99,10 +99,12 @@ with a key sequence."
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (when (evil-escape-p)
-    (let ((inserted (evil-escape--insert))
+    (let ((modified (buffer-modified-p))
+          (inserted (evil-escape--insert))
           (skey (elt evil-escape-key-sequence 1))
           (evt (read-event nil nil evil-escape-delay)))
       (when inserted (evil-escape--delete))
+      (set-buffer-modified-p modified)
       (cond
        ((and (integerp evt) (char-equal evt skey))
         (evil-escape--escape)
