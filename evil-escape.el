@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.0
+;; Version: 3.01
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -117,6 +117,7 @@ with a key sequence."
 (defun evil-escape-p ()
   "Return non-nil if evil-escape should run."
   (and (or (window-minibuffer-p)
+           (bound-and-true-p isearch-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (and (not (eq evil-state 'normal))
                 (not (eq evil-state 'motion))))
@@ -143,7 +144,7 @@ with a key sequence."
   (cond
    ((and (fboundp 'helm-alive-p) (helm-alive-p))
     (abort-recursive-edit))
-   ((eq major-mode 'isearch-mode) (isearch-abort))
+   ((bound-and-true-p isearch-mode) (isearch-abort))
    ((window-minibuffer-p) (abort-recursive-edit))))
 
 (defun evil-escape--escape-motion-state ()
@@ -182,7 +183,7 @@ with a key sequence."
   "Default insert function."
   (when (not buffer-read-only) (self-insert-command 1)))
 
-(defun evil-escape--default-delete-func ()
+(defun evil-escape--delete-func ()
   "Delete char in current buffer if not read only."
   (when (not buffer-read-only) (delete-char -1)))
 
@@ -190,9 +191,10 @@ with a key sequence."
   "Insert the first key of the sequence."
   (pcase evil-state
     (`insert (pcase major-mode
-               (`isearch-mode (isearch-printing-char))
                (`term-mode (call-interactively 'term-send-raw))
-               (_ (evil-escape--insert-func))) t)
+               (_ (cond
+                   ((bound-and-true-p isearch-mode) (isearch-printing-char))
+                   (t (evil-escape--insert-func))))) t)
     (`normal
      (when (window-minibuffer-p) (evil-escape--insert-func) t))
     (`iedit-insert (evil-escape--insert-func) t)))
@@ -201,13 +203,14 @@ with a key sequence."
   "Revert the insertion of the first key of the sequence."
   (pcase evil-state
     (`insert (pcase major-mode
-               (`isearch-mode (isearch-delete-char))
                (`term-mode (call-interactively 'term-send-backspace))
                (`deft-mode (call-interactively 'deft-filter-increment))
-               (_ (evil-escape--default-delete-func))))
+               (_ (cond
+                   ((bound-and-true-p isearch-mode) (isearch-delete-char))
+                   (t (evil-escape--delete-func))))))
     (`normal
-     (when (minibuffer-window-active-p (evil-escape--default-delete-func))))
-    (`iedit-insert (evil-escape--default-delete-func))))
+     (when (minibuffer-window-active-p (evil-escape--delete-func))))
+    (`iedit-insert (evil-escape--delete-func))))
 
 (defun evil-escape--escape-with-q ()
   "Send `q' key press event to exit from a buffer."
