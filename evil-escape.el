@@ -99,20 +99,20 @@ with a key sequence."
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (when (evil-escape-p)
-    (let ((inserted (evil-escape--insert)))
-      (let ((skey (elt evil-escape-key-sequence 1))
-            (evt (read-event nil nil evil-escape-delay)))
-        (cond
-         ((null evt)
-          (when inserted (evil-escape--delete)))
-         ((and (integerp evt) (char-equal evt skey))
-          (when inserted (evil-escape--delete))
-          (evil-escape--escape)
-          (setq this-command 'ignore))
-         (t
-          (when inserted (evil-escape--delete))
-          (setq unread-command-events
-                (append unread-command-events (list evt)))))))))
+    (let ((inserted (evil-escape--insert))
+          (skey (elt evil-escape-key-sequence 1))
+          (evt (read-event nil nil evil-escape-delay)))
+      (cond
+       ((null evt)
+        (when inserted (evil-escape--delete)))
+       ((and (integerp evt) (char-equal evt skey))
+        (when inserted (evil-escape--delete))
+        (evil-escape--escape)
+        (setq this-command 'ignore))
+       (t
+        (when inserted (evil-escape--delete))
+        (setq unread-command-events
+              (append unread-command-events (list evt))))))))
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape should run."
