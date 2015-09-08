@@ -11,6 +11,7 @@
     - [Customization](#customization)
         - [Key sequence](#key-sequence)
         - [Delay between keys](#delay-between-keys)
+        - [Unordered key sequence](#unordered-key-sequence)
         - [Excluding a major mode](#excluding-a-major-mode)
         - [Enable only for a list of major modes](#enable-only-for-a-list-of-major-modes)
         - [Assign a key binding directly](#assign-a-key-binding-directly)
@@ -85,6 +86,11 @@ composed with the two same characters it is recommended to set the delay to
 ```elisp
 (setq-default evil-escape-delay 0.2)
 ```
+
+### Unordered key sequence
+
+The key sequence can be entered in any order by setting
+the variable `evil-escape-unordered-key-sequence` to non nil.
 
 ### Excluding a major mode
 
