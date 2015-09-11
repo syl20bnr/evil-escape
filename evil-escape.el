@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.07
+;; Version: 3.08
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -128,6 +128,7 @@ with a key sequence."
     (`motion (evil-escape--escape-motion-state))
     (`insert (evil-normal-state))
     (`emacs (evil-escape--escape-emacs-state))
+    (`hybrid (evil-escape--escape-emacs-state))
     (`evilified (evil-escape--escape-emacs-state))
     (`visual (evil-exit-visual-state))
     (`replace (evil-normal-state))
@@ -227,27 +228,39 @@ with a key sequence."
 (defun evil-escape--insert ()
   "Insert the first key of the sequence."
   (pcase evil-state
-    (`insert (pcase major-mode
-               (`term-mode (call-interactively 'term-send-raw))
-               (_ (cond
-                   ((bound-and-true-p isearch-mode) (isearch-printing-char))
-                   (t (evil-escape--insert-func))))) t)
+    (`insert (evil-escape--insert-2) t)
+    (`emacs (evil-escape--insert-2) t)
+    (`hybrid (evil-escape--insert-2) t)
     (`normal
      (when (window-minibuffer-p) (evil-escape--insert-func) t))
     (`iedit-insert (evil-escape--insert-func) t)))
 
+(defun evil-escape--insert-2 ()
+  "Insert character while taking into account mode specificites."
+  (pcase major-mode
+    (`term-mode (call-interactively 'term-send-raw))
+    (_ (cond
+        ((bound-and-true-p isearch-mode) (isearch-printing-char))
+        (t (evil-escape--insert-func))))))
+
 (defun evil-escape--delete ()
   "Revert the insertion of the first key of the sequence."
   (pcase evil-state
-    (`insert (pcase major-mode
-               (`term-mode (call-interactively 'term-send-backspace))
-               (`deft-mode (call-interactively 'deft-filter-increment))
-               (_ (cond
-                   ((bound-and-true-p isearch-mode) (isearch-delete-char))
-                   (t (evil-escape--delete-func))))))
+    (`insert (evil-escape--delete-2))
+    (`emacs (evil-escape--delete-2))
+    (`hybrid (evil-escape--delete-2))
     (`normal
      (when (minibuffer-window-active-p (evil-escape--delete-func))))
     (`iedit-insert (evil-escape--delete-func))))
+
+(defun evil-escape--delete-2 ()
+  "Delete character while taking into account mode specifities."
+  (pcase major-mode
+    (`term-mode (call-interactively 'term-send-backspace))
+    (`deft-mode (call-interactively 'deft-filter-increment))
+    (_ (cond
+        ((bound-and-true-p isearch-mode) (isearch-delete-char))
+        (t (evil-escape--delete-func))))))
 
 (defun evil-escape--escape-with-q ()
   "Send `q' key press event to exit from a buffer."
