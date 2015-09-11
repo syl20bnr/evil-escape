@@ -149,8 +149,10 @@ with a key sequence."
       (set-buffer-modified-p modified)
       (cond
        ((and (integerp evt)
-             (or (char-equal evt skey)
+             (or (and (equal (this-command-keys) (evil-escape--first-key))
+                      (char-equal evt skey))
                  (and evil-escape-unordered-key-sequence
+                      (equal (this-command-keys) (evil-escape--second-key))
                       (char-equal evt fkey))))
         (evil-escape)
         (setq this-command 'ignore))
