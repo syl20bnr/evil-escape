@@ -109,6 +109,12 @@ key first."
   :type 'sexp
   :group 'evil-escape)
 
+(defcustom evil-escape-suppressed-predicates nil
+  "List of zero argument predicate functions. If any of these functions
+return nil, evil escape will be suppressed."
+  :type 'sexp
+  :group 'evil-escape)
+
 ;;;###autoload
 (define-minor-mode evil-escape-mode
   "Buffer-local minor mode to escape insert state and everythin else
@@ -171,7 +177,8 @@ with a key sequence."
            (memq major-mode evil-escape-enable-only-for-major-modes))
        (or (equal (this-command-keys) (evil-escape--first-key))
            (and evil-escape-unordered-key-sequence
-                (equal (this-command-keys) (evil-escape--second-key))))))
+                (equal (this-command-keys) (evil-escape--second-key))))
+       (every #'funcall evil-escape-suppressed-predicates)))
 
 (defun evil-escape--escape-normal-state ()
   "Escape from normal state."
