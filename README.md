@@ -103,6 +103,12 @@ An inclusive list of major modes can defined with the variable
 `evil-escape-enable-only-for-major-modes`. When this list is non-nil
 then evil-escape is enabled only for the major-modes in the list.
 
+### Inhibit evil-escape
+
+A list of zero arity functions can be defined with variable
+`evil-escape-inhibit-functions`, if any of these functions return
+non nil then evil-escape is inhibited.
+
 ### Assign a key binding directly
 
 It is possible to bind `evil-escape' function directly`, for

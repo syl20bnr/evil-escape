@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.08
+;; Version: 3.09
 ;; Package-Requires: ((emacs "24") (evil "1.0.9"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -66,6 +66,10 @@
 ;; non-nil then evil-escape is enabled only for the major-modes
 ;; in the list.
 
+;; A list of zero arity functions can be defined with the variable
+;; `evil-escape-inhibit-functions', if any of these functions return
+;; non nil then evil-escape is inhibited.
+
 ;; It is possible to bind `evil-escape' function directly, for
 ;; instance to execute evil-escape with `C-c C-g':
 
@@ -109,9 +113,9 @@ key first."
   :type 'sexp
   :group 'evil-escape)
 
-(defcustom evil-escape-suppressed-predicates nil
-  "List of zero argument predicate functions. If any of these functions
-return nil, evil escape will be suppressed."
+(defcustom evil-escape-inhibit-functions nil
+  "List of zero argument predicate functions disabling evil-escape.
+ If any of these functions return non nil, evil escape will be inhibited."
   :type 'sexp
   :group 'evil-escape)
 
@@ -178,7 +182,8 @@ with a key sequence."
        (or (equal (this-command-keys) (evil-escape--first-key))
            (and evil-escape-unordered-key-sequence
                 (equal (this-command-keys) (evil-escape--second-key))))
-       (every #'funcall evil-escape-suppressed-predicates)))
+       (not (reduce (lambda (x y) (or x y))
+                    (mapcar 'funcall evil-escape-inhibit-functions)))))
 
 (defun evil-escape--escape-normal-state ()
   "Escape from normal state."
