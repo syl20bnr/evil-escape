@@ -150,26 +150,27 @@ with a key sequence."
 
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
-  (when (evil-escape-p)
-    (let ((modified (buffer-modified-p))
-          (inserted (evil-escape--insert))
-          (fkey (elt evil-escape-key-sequence 0))
-          (skey (elt evil-escape-key-sequence 1))
-          (evt (read-event nil nil evil-escape-delay)))
-      (when inserted (evil-escape--delete))
-      (set-buffer-modified-p modified)
-      (cond
-       ((and (integerp evt)
-             (or (and (equal (this-command-keys) (evil-escape--first-key))
-                      (char-equal evt skey))
-                 (and evil-escape-unordered-key-sequence
-                      (equal (this-command-keys) (evil-escape--second-key))
-                      (char-equal evt fkey))))
-        (evil-escape)
-        (setq this-command 'ignore))
-       ((null evt))
-       (t (setq unread-command-events
-                (append unread-command-events (list evt))))))))
+  (with-demoted-errors "evil-escape: Error %S"
+      (when (evil-escape-p)
+        (let ((modified (buffer-modified-p))
+              (inserted (evil-escape--insert))
+              (fkey (elt evil-escape-key-sequence 0))
+              (skey (elt evil-escape-key-sequence 1))
+              (evt (read-event nil nil evil-escape-delay)))
+          (when inserted (evil-escape--delete))
+          (set-buffer-modified-p modified)
+          (cond
+           ((and (integerp evt)
+                 (or (and (equal (this-command-keys) (evil-escape--first-key))
+                          (char-equal evt skey))
+                     (and evil-escape-unordered-key-sequence
+                          (equal (this-command-keys) (evil-escape--second-key))
+                          (char-equal evt fkey))))
+            (evil-escape)
+            (setq this-command 'ignore))
+           ((null evt))
+           (t (setq unread-command-events
+                    (append unread-command-events (list evt)))))))))
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape can run."
