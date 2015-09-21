@@ -6,7 +6,7 @@
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
 ;; Version: 3.09
-;; Package-Requires: ((emacs "24") (evil "1.0.9"))
+;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
 ;; This file is not part of GNU Emacs.
@@ -81,6 +81,7 @@
 ;;; Code:
 
 (require 'evil)
+(require 'cl-lib)
 
 (defgroup evil-escape nil
   "Key sequence to escape insert state and everything else."
@@ -182,8 +183,9 @@ with a key sequence."
        (or (equal (this-command-keys) (evil-escape--first-key))
            (and evil-escape-unordered-key-sequence
                 (equal (this-command-keys) (evil-escape--second-key))))
-       (not (reduce (lambda (x y) (or x y))
-                    (mapcar 'funcall evil-escape-inhibit-functions)))))
+       (not (cl-reduce (lambda (x y) (or x y))
+                       (mapcar 'funcall evil-escape-inhibit-functions)
+                       :initial-value nil))))
 
 (defun evil-escape--escape-normal-state ()
   "Escape from normal state."
