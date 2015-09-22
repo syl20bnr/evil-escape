@@ -83,6 +83,9 @@
 (require 'evil)
 (require 'cl-lib)
 
+(eval-when-compile
+  (declare-function evil-iedit-state/quit-iedit-mode "evil-iedit-state.el"))
+
 (defgroup evil-escape nil
   "Key sequence to escape insert state and everything else."
   :prefix "evil-escape-"
