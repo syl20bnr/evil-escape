@@ -14,6 +14,7 @@
         - [Unordered key sequence](#unordered-key-sequence)
         - [Excluding a major mode](#excluding-a-major-mode)
         - [Enable only for a list of major modes](#enable-only-for-a-list-of-major-modes)
+        - [Inhibit evil-escape](#inhibit-evil-escape)
         - [Assign a key binding directly](#assign-a-key-binding-directly)
 
 <!-- markdown-toc end -->
