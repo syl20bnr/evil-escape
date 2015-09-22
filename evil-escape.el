@@ -244,13 +244,15 @@ with a key sequence."
 
 (defun evil-escape--insert ()
   "Insert the first key of the sequence."
-  (pcase evil-state
-    (`insert (evil-escape--insert-2) t)
-    (`emacs (evil-escape--insert-2) t)
-    (`hybrid (evil-escape--insert-2) t)
-    (`normal
-     (when (window-minibuffer-p) (evil-escape--insert-func) t))
-    (`iedit-insert (evil-escape--insert-func) t)))
+  (condition-case err
+      (pcase evil-state
+        (`insert (evil-escape--insert-2) t)
+        (`emacs (evil-escape--insert-2) t)
+        (`hybrid (evil-escape--insert-2) t)
+        (`normal
+         (when (window-minibuffer-p) (evil-escape--insert-func) t))
+        (`iedit-insert (evil-escape--insert-func) t))
+    ('error nil)))
 
 (defun evil-escape--insert-2 ()
   "Insert character while taking into account mode specificites."
