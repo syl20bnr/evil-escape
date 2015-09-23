@@ -122,7 +122,7 @@ key first."
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
-  "Buffer-local minor mode to escape insert state and everythin else
+  "Buffer-local minor mode to escape insert state and everything else
 with a key sequence."
   :lighter (:eval (concat " " evil-escape-key-sequence))
   :group 'evil
