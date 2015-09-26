@@ -138,8 +138,12 @@ with a key sequence."
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape ()
-  "Return the function to escape from everything... well almost everything."
+  "Escape from everything... well almost everything."
   (interactive)
+  (call-interactively (evil-escape-func)))
+
+(defun evil-escape-func ()
+  "Return the function to escape from everything."
   (pcase evil-state
     (`normal (evil-escape--escape-normal-state))
     (`motion (evil-escape--escape-motion-state))
@@ -174,7 +178,7 @@ with a key sequence."
                      (and evil-escape-unordered-key-sequence
                           (equal (this-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
-            (setq this-command (evil-escape)))
+            (setq this-command (evil-escape-func)))
            ((null evt))
            (t (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
