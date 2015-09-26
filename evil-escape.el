@@ -131,7 +131,7 @@ with a key sequence."
   :group 'evil
   :global t
   (if evil-escape-mode
-      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
+      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook t)
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape ()
@@ -156,11 +156,13 @@ with a key sequence."
   (with-demoted-errors "evil-escape: Error %S"
       (when (evil-escape-p)
         (let ((modified (buffer-modified-p))
+              (repeat-info evil-repeat-info)
               (inserted (evil-escape--insert))
               (fkey (elt evil-escape-key-sequence 0))
               (skey (elt evil-escape-key-sequence 1))
               (evt (read-event nil nil evil-escape-delay)))
           (when inserted (evil-escape--delete))
+          (setq evil-repeat-info repeat-info)
           (set-buffer-modified-p modified)
           (cond
            ((and (integerp evt)
