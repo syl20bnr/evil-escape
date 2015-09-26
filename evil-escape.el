@@ -123,6 +123,9 @@ key first."
   :type 'sexp
   :group 'evil-escape)
 
+(defvar evil-escape-inhibit nil
+  "When non nil evil-escape is inhibited.")
+
 ;;;###autoload
 (define-minor-mode evil-escape-mode
   "Buffer-local minor mode to escape insert state and everything else
@@ -131,36 +134,36 @@ with a key sequence."
   :group 'evil
   :global t
   (if evil-escape-mode
-      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook t)
+      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape ()
-  "Escape from everything... well almost everything."
+  "Return the function to escape from everything... well almost everything."
   (interactive)
   (pcase evil-state
     (`normal (evil-escape--escape-normal-state))
     (`motion (evil-escape--escape-motion-state))
-    (`insert (evil-normal-state))
+    (`insert 'evil-normal-state)
     (`emacs (evil-escape--escape-emacs-state))
     (`hybrid (evil-escape--escape-emacs-state))
     (`evilified (evil-escape--escape-emacs-state))
-    (`visual (evil-exit-visual-state))
-    (`replace (evil-normal-state))
-    (`lisp (evil-normal-state))
-    (`iedit (evil-iedit-state/quit-iedit-mode))
-    (`iedit-insert (evil-iedit-state/quit-iedit-mode))
+    (`visual 'evil-exit-visual-state)
+    (`replace 'evil-normal-state)
+    (`lisp 'evil-normal-state)
+    (`iedit 'evil-iedit-state/quit-iedit-mode)
+    (`iedit-insert 'evil-iedit-state/quit-iedit-mode)
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
       (when (evil-escape-p)
-        (let ((modified (buffer-modified-p))
-              (repeat-info evil-repeat-info)
-              (inserted (evil-escape--insert))
-              (fkey (elt evil-escape-key-sequence 0))
-              (skey (elt evil-escape-key-sequence 1))
-              (evt (read-event nil nil evil-escape-delay)))
+        (let* ((modified (buffer-modified-p))
+               (repeat-info evil-repeat-info)
+               (inserted (evil-escape--insert))
+               (fkey (elt evil-escape-key-sequence 0))
+               (skey (elt evil-escape-key-sequence 1))
+               (evt (read-event nil nil evil-escape-delay)))
           (when inserted (evil-escape--delete))
           (setq evil-repeat-info repeat-info)
           (set-buffer-modified-p modified)
@@ -171,15 +174,19 @@ with a key sequence."
                      (and evil-escape-unordered-key-sequence
                           (equal (this-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
-            (evil-escape)
-            (setq this-command 'ignore))
+            (setq this-command (evil-escape)))
            ((null evt))
            (t (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
 
+(defadvice evil-repeat (around evil-escape-repeat-info activate)
+  (let ((evil-escape-inhibit t))
+    ad-do-it))
+
 (defun evil-escape-p ()
   "Return non-nil if evil-escape can run."
-  (and (or (window-minibuffer-p)
+  (and (not evil-escape-inhibit)
+       (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (not (eq evil-state 'normal)))
@@ -194,38 +201,38 @@ with a key sequence."
                        :initial-value nil))))
 
 (defun evil-escape--escape-normal-state ()
-  "Escape from normal state."
+  "Return the function to escape from normal state."
   (cond
    ((and (fboundp 'helm-alive-p) (helm-alive-p))
-    (abort-recursive-edit))
-   ((bound-and-true-p isearch-mode) (isearch-abort))
-   ((window-minibuffer-p) (abort-recursive-edit))))
+    'abort-recursive-edit)
+   ((bound-and-true-p isearch-mode) 'isearch-abort)
+   ((window-minibuffer-p) 'abort-recursive-edit)))
 
 (defun evil-escape--escape-motion-state ()
-  "Escape from motion state."
+  "Return the function to escape from motion state."
   (cond
    ((or (eq 'apropos-mode major-mode)
         (eq 'help-mode major-mode)
         (eq 'ert-results-mode major-mode)
         (eq 'ert-simple-view-mode major-mode))
-    (quit-window))
+    'quit-window)
    ((eq 'undo-tree-visualizer-mode major-mode)
-    (undo-tree-visualizer-quit))
+    'undo-tree-visualizer-quit)
    ((and (fboundp 'helm-ag--edit-abort)
          (string-equal "*helm-ag-edit*" (buffer-name)))
-    (call-interactively 'helm-ag--edit-abort))
-   ((eq 'neotree-mode major-mode) (neotree-hide))
-   (t (evil-normal-state))))
+    'helm-ag--edit-abort)
+   ((eq 'neotree-mode major-mode) 'neotree-hide)
+   (t 'evil-normal-state)))
 
 (defun evil-escape--escape-emacs-state ()
-  "Escape from emacs state."
+  "Return the function to escape from emacs state."
   (cond ((string-match "magit" (symbol-name major-mode))
-         (evil-escape--escape-with-q))
+         'evil-escape--escape-with-q)
         ((eq 'paradox-menu-mode major-mode)
-         (evil-escape--escape-with-q))
+         'evil-escape--escape-with-q)
         ((eq 'gist-list-menu-mode major-mode)
-         (quit-window))
-        (t (evil-normal-state))))
+         'quit-window)
+        (t 'evil-normal-state)))
 
 (defun evil-escape--first-key ()
   "Return the first key string in the key sequence."
