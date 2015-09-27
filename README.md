@@ -109,6 +109,8 @@ then evil-escape is enabled only for the major-modes in the list.
 A list of zero arity functions can be defined with variable
 `evil-escape-inhibit-functions`, if any of these functions return
 non nil then evil-escape is inhibited.
+It is also possible to inhibit evil-escape in a let binding by
+setting the `evil-escape-inhibit` variable to non nil.
 
 ### Assign a key binding directly
 

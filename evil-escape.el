@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.09
+;; Version: 3.10
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -69,6 +69,8 @@
 ;; A list of zero arity functions can be defined with the variable
 ;; `evil-escape-inhibit-functions', if any of these functions return
 ;; non nil then evil-escape is inhibited.
+;; It is also possible to inhibit evil-escape in a let binding by
+;; setting the `evil-escape-inhibit' variable to non nil.
 
 ;; It is possible to bind `evil-escape' function directly, for
 ;; instance to execute evil-escape with `C-c C-g':
