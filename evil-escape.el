@@ -233,6 +233,7 @@ with a key sequence."
   (cond ((string-match "magit" (symbol-name major-mode))
          'evil-escape--escape-with-q)
         ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
+        ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
         ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
         ((eq 'gist-list-menu-mode major-mode) 'quit-window)
         (t 'evil-normal-state)))
