@@ -134,7 +134,7 @@ with a key sequence."
   :group 'evil
   :global t
   (if evil-escape-mode
-      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
+      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook t)
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape ()
@@ -163,13 +163,11 @@ with a key sequence."
   (with-demoted-errors "evil-escape: Error %S"
       (when (evil-escape-p)
         (let* ((modified (buffer-modified-p))
-               (repeat-info evil-repeat-info)
-               (inserted (evil-escape--insert))
+               ;; (inserted (evil-escape--insert))
                (fkey (elt evil-escape-key-sequence 0))
                (skey (elt evil-escape-key-sequence 1))
                (evt (read-event nil nil evil-escape-delay)))
-          (when inserted (evil-escape--delete))
-          (setq evil-repeat-info repeat-info)
+          ;; (when inserted (evil-escape--delete))
           (set-buffer-modified-p modified)
           (cond
            ((and (integerp evt)
@@ -178,6 +176,7 @@ with a key sequence."
                      (and evil-escape-unordered-key-sequence
                           (equal (this-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
+            (evil-repeat-stop)
             (setq this-command (evil-escape-func)))
            ((null evt))
            (t (setq unread-command-events
@@ -299,6 +298,7 @@ with a key sequence."
 
 (defun evil-escape--escape-with-q ()
   "Send `q' key press event to exit from a buffer."
+  (interactive)
   (setq unread-command-events (listify-key-sequence "q")))
 
 (provide 'evil-escape)
