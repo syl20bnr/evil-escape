@@ -209,7 +209,7 @@ with a key sequence."
   "Return the function to escape from normal state."
   (cond
    ((and (fboundp 'helm-alive-p) (helm-alive-p))
-    'abort-recursive-edit)
+    'helm-keyboard-quit)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
    ((window-minibuffer-p) 'abort-recursive-edit)))
 
