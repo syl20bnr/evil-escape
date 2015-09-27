@@ -35,6 +35,7 @@
 ;;   - abort evil ex command
 ;;   - quit minibuffer
 ;;   - abort isearch
+;;   - quit ibuffer
 ;;   - quit magit buffers
 ;;   - quit help buffers
 ;;   - quit apropos buffers
@@ -193,6 +194,7 @@ with a key sequence."
   (and (not evil-escape-inhibit)
        (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
+           (eq 'ibuffer-mode major-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (not (eq evil-state 'normal)))
        (not (memq major-mode evil-escape-excluded-major-modes))
@@ -208,8 +210,8 @@ with a key sequence."
 (defun evil-escape--escape-normal-state ()
   "Return the function to escape from normal state."
   (cond
-   ((and (fboundp 'helm-alive-p) (helm-alive-p))
-    'helm-keyboard-quit)
+   ((and (fboundp 'helm-alive-p) (helm-alive-p)) 'helm-keyboard-quit)
+   ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
    ((window-minibuffer-p) 'abort-recursive-edit)))
 
@@ -219,13 +221,10 @@ with a key sequence."
    ((or (eq 'apropos-mode major-mode)
         (eq 'help-mode major-mode)
         (eq 'ert-results-mode major-mode)
-        (eq 'ert-simple-view-mode major-mode))
-    'quit-window)
-   ((eq 'undo-tree-visualizer-mode major-mode)
-    'undo-tree-visualizer-quit)
+        (eq 'ert-simple-view-mode major-mode)) 'quit-window)
+   ((eq 'undo-tree-visualizer-mode major-mode) 'undo-tree-visualizer-quit)
    ((and (fboundp 'helm-ag--edit-abort)
-         (string-equal "*helm-ag-edit*" (buffer-name)))
-    'helm-ag--edit-abort)
+         (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
    ((eq 'neotree-mode major-mode) 'neotree-hide)
    (t 'evil-normal-state)))
 
@@ -233,10 +232,9 @@ with a key sequence."
   "Return the function to escape from emacs state."
   (cond ((string-match "magit" (symbol-name major-mode))
          'evil-escape--escape-with-q)
-        ((eq 'paradox-menu-mode major-mode)
-         'evil-escape--escape-with-q)
-        ((eq 'gist-list-menu-mode major-mode)
-         'quit-window)
+        ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
+        ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
+        ((eq 'gist-list-menu-mode major-mode) 'quit-window)
         (t 'evil-normal-state)))
 
 (defun evil-escape--first-key ()

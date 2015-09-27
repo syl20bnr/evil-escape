@@ -34,6 +34,7 @@ Press quickly `fd` (or the 2-keys sequence of your choice) to:
 - abort evil ex command
 - quit minibuffer
 - abort isearch
+- quit ibuffer
 - quit magit buffers
 - quit help buffers
 - quit apropos buffers
