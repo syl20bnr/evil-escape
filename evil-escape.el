@@ -163,11 +163,11 @@ with a key sequence."
   (with-demoted-errors "evil-escape: Error %S"
       (when (evil-escape-p)
         (let* ((modified (buffer-modified-p))
-               ;; (inserted (evil-escape--insert))
+               (inserted (evil-escape--insert))
                (fkey (elt evil-escape-key-sequence 0))
                (skey (elt evil-escape-key-sequence 1))
                (evt (read-event nil nil evil-escape-delay)))
-          ;; (when inserted (evil-escape--delete))
+          (when inserted (evil-escape--delete))
           (set-buffer-modified-p modified)
           (cond
            ((and (integerp evt)
