@@ -299,7 +299,6 @@ with a key sequence."
   "Delete character while taking into account mode specifities."
   (pcase major-mode
     (`term-mode (call-interactively 'term-send-backspace))
-    (`deft-mode (call-interactively 'deft-filter-increment))
     (_ (cond
         ((bound-and-true-p isearch-mode) (isearch-delete-char))
         (t (evil-escape--delete-func))))))
