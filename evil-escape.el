@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.10
+;; Version: 3.11
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -230,13 +230,15 @@ with a key sequence."
 
 (defun evil-escape--escape-emacs-state ()
   "Return the function to escape from emacs state."
-  (cond ((string-match "magit" (symbol-name major-mode))
-         'evil-escape--escape-with-q)
-        ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
-        ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
-        ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
-        ((eq 'gist-list-menu-mode major-mode) 'quit-window)
-        (t 'evil-normal-state)))
+  (cond
+   ((bound-and-true-p isearch-mode) 'isearch-abort)
+   ((window-minibuffer-p) 'abort-recursive-edit)
+   ((string-match "magit" (symbol-name major-mode)) 'evil-escape--escape-with-q)
+   ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
+   ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
+   ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
+   ((eq 'gist-list-menu-mode major-mode) 'quit-window)
+   (t 'evil-normal-state)))
 
 (defun evil-escape--first-key ()
   "Return the first key string in the key sequence."
