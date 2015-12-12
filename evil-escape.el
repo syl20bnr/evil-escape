@@ -180,7 +180,7 @@ with a key sequence."
                           (equal (this-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
             (evil-repeat-stop)
-            (setq this-command (evil-escape-func)))
+            (when (evil-escape-func) (setq this-command (evil-escape-func))))
            ((null evt))
            (t (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
@@ -196,7 +196,9 @@ with a key sequence."
            (bound-and-true-p isearch-mode)
            (eq 'ibuffer-mode major-mode)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
-           (not (eq evil-state 'normal)))
+           (or (not (eq 'normal evil-state))
+               (not (eq 'evil-force-normal-state
+                        (lookup-key evil-normal-state-map [escape])))))
        (not (memq major-mode evil-escape-excluded-major-modes))
        (or (not evil-escape-enable-only-for-major-modes)
            (memq major-mode evil-escape-enable-only-for-major-modes))
@@ -213,7 +215,8 @@ with a key sequence."
    ((and (fboundp 'helm-alive-p) (helm-alive-p)) 'helm-keyboard-quit)
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
-   ((window-minibuffer-p) 'abort-recursive-edit)))
+   ((window-minibuffer-p) 'abort-recursive-edit)
+   (t (lookup-key evil-normal-state-map [escape]))))
 
 (defun evil-escape--escape-motion-state ()
   "Return the function to escape from motion state."
