@@ -34,6 +34,7 @@
 ;;   - escape from evil-iedit-state to normal state
 ;;   - abort evil ex command
 ;;   - quit minibuffer
+;;   - quit compilation buffers
 ;;   - abort isearch
 ;;   - quit ibuffer
 ;;   - quit magit buffers
@@ -221,10 +222,11 @@ with a key sequence."
 (defun evil-escape--escape-motion-state ()
   "Return the function to escape from motion state."
   (cond
-   ((or (eq 'apropos-mode major-mode)
-        (eq 'help-mode major-mode)
-        (eq 'ert-results-mode major-mode)
-        (eq 'ert-simple-view-mode major-mode)) 'quit-window)
+   ((or (memq major-mode '(apropos-mode
+                           help-mode
+                           ert-results-mode
+                           ert-simple-view-mode
+                           compilation-mode))) 'quit-window)
    ((eq 'undo-tree-visualizer-mode major-mode) 'undo-tree-visualizer-quit)
    ((and (fboundp 'helm-ag--edit-abort)
          (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
