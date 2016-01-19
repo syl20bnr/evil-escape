@@ -112,7 +112,12 @@ key first."
   :group 'evil-escape)
 
 (defcustom evil-escape-excluded-major-modes nil
-  "Excluded major modes where escape sequences has no effect."
+  "Excluded major modes where escape sequences have no effect."
+  :type 'sexp
+  :group 'evil-escape)
+
+(defcustom evil-escape-excluded-states nil
+  "Excluded states where escape sequences have no effect."
   :type 'sexp
   :group 'evil-escape)
 
@@ -201,6 +206,7 @@ with a key sequence."
                (not (eq 'evil-force-normal-state
                         (lookup-key evil-normal-state-map [escape])))))
        (not (memq major-mode evil-escape-excluded-major-modes))
+       (not (memq evil-state evil-escape-excluded-states))
        (or (not evil-escape-enable-only-for-major-modes)
            (memq major-mode evil-escape-enable-only-for-major-modes))
        (or (equal (this-command-keys) (evil-escape--first-key))
