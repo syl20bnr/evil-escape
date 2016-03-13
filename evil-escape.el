@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.12
+;; Version: 3.13
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -157,7 +157,7 @@ with a key sequence."
     (`evilified (evil-escape--escape-emacs-state))
     (`visual 'evil-exit-visual-state)
     (`replace 'evil-normal-state)
-    (`lisp 'evil-normal-state)
+    (`lisp 'evil-lisp-state/quit)
     (`iedit 'evil-iedit-state/quit-iedit-mode)
     (`iedit-insert 'evil-iedit-state/quit-iedit-mode)
     (_ (evil-escape--escape-normal-state))))
