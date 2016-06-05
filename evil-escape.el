@@ -202,6 +202,7 @@ with a key sequence."
        (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
            (eq 'ibuffer-mode major-mode)
+           (evil-escape--is-magit-buffer)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (or (not (eq 'normal evil-state))
                (not (eq 'evil-force-normal-state
@@ -222,6 +223,7 @@ with a key sequence."
   (cond
    ((and (fboundp 'helm-alive-p) (helm-alive-p)) 'helm-keyboard-quit)
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
+   ((evil-escape--is-magit-buffer) 'evil-escape--escape-with-q)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
    ((window-minibuffer-p) 'abort-recursive-edit)
    (t (lookup-key evil-normal-state-map [escape]))))
@@ -245,7 +247,7 @@ with a key sequence."
   (cond
    ((bound-and-true-p isearch-mode) 'isearch-abort)
    ((window-minibuffer-p) 'abort-recursive-edit)
-   ((string-match "magit" (symbol-name major-mode)) 'evil-escape--escape-with-q)
+   ((evil-escape--is-magit-buffer) 'evil-escape--escape-with-q)
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
    ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
    ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
@@ -314,6 +316,10 @@ with a key sequence."
   "Send `q' key press event to exit from a buffer."
   (interactive)
   (setq unread-command-events (listify-key-sequence "q")))
+
+(defun evil-escape--is-magit-buffer ()
+  "Return non nil if the current buffer is a Magit buffer."
+  (string-match "magit" (symbol-name major-mode)))
 
 (provide 'evil-escape)
 
