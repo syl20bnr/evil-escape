@@ -197,7 +197,8 @@ with a key sequence."
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape can run."
-  (and (not evil-escape-inhibit)
+  (and evil-escape-key-sequence
+       (not evil-escape-inhibit)
        (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
            (eq 'ibuffer-mode major-mode)
