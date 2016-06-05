@@ -179,7 +179,7 @@ with a key sequence."
           (when inserted (evil-escape--delete))
           (set-buffer-modified-p modified)
           (cond
-           ((and (integerp evt)
+           ((and (characterp evt)
                  (or (and (equal (this-command-keys) (evil-escape--first-key))
                           (char-equal evt skey))
                      (and evil-escape-unordered-key-sequence
