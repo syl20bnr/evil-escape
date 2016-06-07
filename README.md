@@ -35,6 +35,7 @@ Press quickly `fd` (or the 2-keys sequence of your choice) to:
 - quit minibuffer
 - abort isearch
 - quit ibuffer
+- quit image buffer
 - quit compilation buffers
 - quit magit buffers
 - quit help buffers

@@ -37,6 +37,7 @@
 ;;   - quit compilation buffers
 ;;   - abort isearch
 ;;   - quit ibuffer
+;;   - quit image buffer
 ;;   - quit magit buffers
 ;;   - quit help buffers
 ;;   - quit apropos buffers
@@ -201,7 +202,8 @@ with a key sequence."
        (not evil-escape-inhibit)
        (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
-           (eq 'ibuffer-mode major-mode)
+           (memq major-mode '(ibuffer-mode
+                              image-mode))
            (evil-escape--is-magit-buffer)
            (and (fboundp 'helm-alive-p) (helm-alive-p))
            (or (not (eq 'normal evil-state))
@@ -223,6 +225,7 @@ with a key sequence."
   (cond
    ((and (fboundp 'helm-alive-p) (helm-alive-p)) 'helm-keyboard-quit)
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
+   ((eq 'image-mode major-mode) 'quit-window)
    ((evil-escape--is-magit-buffer) 'evil-escape--escape-with-q)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
    ((window-minibuffer-p) 'abort-recursive-edit)
@@ -235,7 +238,8 @@ with a key sequence."
                            help-mode
                            ert-results-mode
                            ert-simple-view-mode
-                           compilation-mode))) 'quit-window)
+                           compilation-mode
+                           image-mode))) 'quit-window)
    ((eq 'undo-tree-visualizer-mode major-mode) 'undo-tree-visualizer-quit)
    ((and (fboundp 'helm-ag--edit-abort)
          (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
@@ -251,7 +255,8 @@ with a key sequence."
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
    ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
    ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
-   ((eq 'gist-list-menu-mode major-mode) 'quit-window)
+   ((memq major-mode '(gist-list-menu-mode
+                       image-mode)) 'quit-window)
    (t 'evil-normal-state)))
 
 (defun evil-escape--first-key ()
