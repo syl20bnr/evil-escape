@@ -144,7 +144,7 @@ with a key sequence."
   :group 'evil
   :global t
   (if evil-escape-mode
-      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook t)
+      (add-hook 'pre-command-hook 'evil-escape-pre-command-hook)
     (remove-hook 'pre-command-hook 'evil-escape-pre-command-hook)))
 
 (defun evil-escape ()
