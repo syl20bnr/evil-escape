@@ -187,7 +187,10 @@ with a key sequence."
                           (equal (this-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
             (evil-repeat-stop)
-            (when (evil-escape-func) (setq this-command (evil-escape-func))))
+            (let ((esc-fun (evil-escape-func)))
+              (when esc-fun
+                (setq this-command esc-fun)
+                (setq this-original-command esc-fun))))
            ((null evt))
            (t (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
