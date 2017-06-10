@@ -166,6 +166,8 @@ with a key sequence."
     (`lisp 'evil-lisp-state/quit)
     (`iedit 'evil-iedit-state/quit-iedit-mode)
     (`iedit-insert 'evil-iedit-state/quit-iedit-mode)
+    (`multiedit 'evil-multiedit-abort)
+    (`multiedit-insert 'evil-multiedit-abort)
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-pre-command-hook ()
