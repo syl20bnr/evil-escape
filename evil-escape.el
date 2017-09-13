@@ -5,7 +5,7 @@
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.14
+;; Version: 3.15
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
@@ -47,6 +47,7 @@
 ;;   - quit gist-list menu
 ;;   - quit helm-ag-edit
 ;;   - hide neotree buffer
+;;   - quit evil-multiedit
 ;; And more to come !
 
 ;; Configuration:
