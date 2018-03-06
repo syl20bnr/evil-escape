@@ -330,7 +330,7 @@ with a key sequence."
 
 (defun evil-escape--is-magit-buffer ()
   "Return non nil if the current buffer is a Magit buffer."
-  (string-match "magit" (symbol-name major-mode)))
+  (string-match-p "magit" (symbol-name major-mode)))
 
 (provide 'evil-escape)
 
