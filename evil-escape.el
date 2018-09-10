@@ -1,4 +1,4 @@
-;;; evil-escape.el --- Escape from anything with a customizable key sequence
+ ;;; evil-escape.el --- Escape from anything with a customizable key sequence
 
 ;; Copyright (C) 2014-2015 syl20bnr
 ;;
@@ -102,6 +102,11 @@
   :type 'key-sequence
   :group 'evil-escape)
 
+(defcustom evil-escape-lighter '(concat " " evil-escape-key-sequence)
+  "The lighter for the evil escape mode."
+  :type 'sexp
+  :group 'evil-escape)
+
 (defcustom evil-escape-delay 0.1
   "Max time delay between two key presses."
   :type 'number
@@ -141,7 +146,7 @@ key first."
 (define-minor-mode evil-escape-mode
   "Buffer-local minor mode to escape insert state and everything else
 with a key sequence."
-  :lighter (:eval (concat " " evil-escape-key-sequence))
+  :lighter (:eval evil-escape-lighter)
   :group 'evil
   :global t
   (if evil-escape-mode
