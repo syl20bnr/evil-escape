@@ -1,4 +1,4 @@
- ;;; evil-escape.el --- Escape from anything with a customizable key sequence
+;;; evil-escape.el --- Escape from anything with a customizable key sequence
 
 ;; Copyright (C) 2014-2015 syl20bnr
 ;;
