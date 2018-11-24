@@ -179,33 +179,33 @@ with a key sequence."
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
-      (when (evil-escape-p)
-        (let* ((modified (buffer-modified-p))
-               (inserted (evil-escape--insert))
-               (fkey (elt evil-escape-key-sequence 0))
-               (skey (elt evil-escape-key-sequence 1))
-               (evt (read-event nil nil evil-escape-delay)))
-          (when (and inserted (not (eq 'vterm-mode major-mode)))
-            (evil-escape--delete))
-          (set-buffer-modified-p modified)
-          (cond
-           ((and (characterp evt)
-                 (or (and (equal (this-command-keys) (evil-escape--first-key))
-                          (char-equal evt skey))
-                     (and evil-escape-unordered-key-sequence
-                          (equal (this-command-keys) (evil-escape--second-key))
-                          (char-equal evt fkey))))
-            (evil-repeat-stop)
-            (when (eq 'vterm-mode major-mode)
-              (vterm-send-key "<backspace>"))
-            (let ((esc-fun (evil-escape-func)))
-              (when esc-fun
-                (setq this-command esc-fun)
-                (setq this-original-command esc-fun))))
-           ((null evt))
-           ((not (eq 'vterm-mode major-mode))
-            (setq unread-command-events
-                  (append unread-command-events (list evt)))))))))
+    (when (evil-escape-p)
+      (let* ((modified (buffer-modified-p))
+             (inserted (evil-escape--insert))
+             (fkey (elt evil-escape-key-sequence 0))
+             (skey (elt evil-escape-key-sequence 1))
+             (evt (read-event nil nil evil-escape-delay)))
+        (when (and inserted (not (eq 'vterm-mode major-mode)))
+          (evil-escape--delete))
+        (set-buffer-modified-p modified)
+        (cond
+         ((and (characterp evt)
+               (or (and (equal (this-command-keys) (evil-escape--first-key))
+                        (char-equal evt skey))
+                   (and evil-escape-unordered-key-sequence
+                        (equal (this-command-keys) (evil-escape--second-key))
+                        (char-equal evt fkey))))
+          (evil-repeat-stop)
+          (when (eq 'vterm-mode major-mode)
+            (vterm-send-key "<backspace>"))
+          (let ((esc-fun (evil-escape-func)))
+            (when esc-fun
+              (setq this-command esc-fun)
+              (setq this-original-command esc-fun))))
+         ((null evt))
+         ((not (eq 'vterm-mode major-mode))
+          (setq unread-command-events
+                (append unread-command-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
   (let ((evil-escape-inhibit t))
@@ -301,8 +301,7 @@ with a key sequence."
         (`insert (evil-escape--insert-2) t)
         (`emacs (evil-escape--insert-2) t)
         (`hybrid (evil-escape--insert-2) t)
-        (`normal
-         (when (window-minibuffer-p) (evil-escape--insert-func) t))
+        (`normal (when (window-minibuffer-p) (evil-escape--insert-func) t))
         (`iedit-insert (evil-escape--insert-func) t))
     ('error nil)))
 
@@ -321,8 +320,7 @@ with a key sequence."
     (`insert (evil-escape--delete-2))
     (`emacs (evil-escape--delete-2))
     (`hybrid (evil-escape--delete-2))
-    (`normal
-     (when (minibuffer-window-active-p (evil-escape--delete-func))))
+    (`normal (when (minibuffer-window-active-p (evil-escape--delete-func))))
     (`iedit-insert (evil-escape--delete-func))))
 
 (defun evil-escape--delete-2 ()
