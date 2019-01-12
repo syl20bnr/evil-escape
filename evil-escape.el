@@ -185,7 +185,7 @@ with a key sequence."
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-command-keys ()
-    (if evil-escape-case-insensitive-key-sequence (downcase (this-command-keys)) (this-command-keys)))
+    (if (and evil-escape-case-insensitive-key-sequence (char-or-string-p (this-command-keys))) (downcase (this-command-keys)) (this-command-keys)))
 
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
