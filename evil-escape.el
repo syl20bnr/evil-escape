@@ -49,6 +49,7 @@
 ;;   - quit gist-list menu
 ;;   - quit helm-ag-edit
 ;;   - hide neotree buffer
+;;   - hide treemacs buffer
 ;;   - quit evil-multiedit
 ;; And more to come !
 
@@ -262,6 +263,7 @@ If any of these functions return non nil, evil escape will be inhibited."
          (string-equal "*helm-ag-edit*" (buffer-name)))
     'helm-ag--edit-abort)
    ((eq 'neotree-mode major-mode) 'neotree-hide)
+   ((eq 'treemacs-mode major-mode) 'treemacs-quit)
    (t 'evil-normal-state)))
 
 (defun evil-escape--escape-emacs-state ()
