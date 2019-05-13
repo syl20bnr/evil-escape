@@ -47,6 +47,7 @@
 ;;   - quit gist-list menu
 ;;   - quit helm-ag-edit
 ;;   - hide neotree buffer
+;;   - hide treemacs buffer
 ;;   - quit evil-multiedit
 ;; And more to come !
 
@@ -255,6 +256,7 @@ with a key sequence."
    ((and (fboundp 'helm-ag--edit-abort)
          (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
    ((eq 'neotree-mode major-mode) 'neotree-hide)
+   ((eq 'treemacs-mode major-mode) 'treemacs-quit)
    (t 'evil-normal-state)))
 
 (defun evil-escape--escape-emacs-state ()
