@@ -46,6 +46,7 @@ Press quickly `fd` (or the 2-keys sequence of your choice) to:
 - quit gist-list menu
 - quit helm-ag-edit
 - hide neotree buffer
+- hide treemacs buffer
 - quit evil-multiedit
 
 And more to come !
