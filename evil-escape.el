@@ -180,13 +180,16 @@ If any of these functions return non nil, evil escape will be inhibited."
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
     (when (evil-escape-p)
-      (let* ((modified (buffer-modified-p))
+      ;; Don't inhibit redisplay, else visual mode j key will not be updated.
+      (let* ((inhibit-redisplay nil)
+             (fontification-functions nil)
+             (modified (buffer-modified-p))
              (inserted (evil-escape--insert))
              (fkey (elt evil-escape-key-sequence 0))
              (skey (elt evil-escape-key-sequence 1))
              (evt (read-event nil nil evil-escape-delay)))
         (when inserted (evil-escape--delete))
-        (set-buffer-modified-p modified)
+        (restore-buffer-modified-p modified)
         (cond
          ((and (characterp evt)
                (or (and (equal (this-command-keys) (evil-escape--first-key))
