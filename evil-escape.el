@@ -200,8 +200,8 @@ with a key sequence."
                 (setq this-command esc-fun)
                 (setq this-original-command esc-fun))))
            ((null evt))
-           (t (setq unread-command-events
-                    (append unread-command-events (list evt)))))))))
+           (t (setq unread-post-input-method-events
+                    (append unread-post-input-method-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
   (let ((evil-escape-inhibit t))
