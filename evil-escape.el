@@ -203,8 +203,8 @@ If any of these functions return non nil, evil escape will be inhibited."
               (setq this-command esc-fun)
               (setq this-original-command esc-fun))))
          ((null evt))
-         (t (setq unread-command-events
-                  (append unread-command-events (list evt)))))))))
+         (t (setq unread-post-input-method-events
+                  (append unread-post-input-method-events (list evt)))))))))
 
 (defun evil-escape--evil-repeat (fn &rest args)
   "Bind `evil-escape-inhibit' to t."
