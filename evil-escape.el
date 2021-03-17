@@ -184,6 +184,7 @@ with a key sequence."
                (inserted (evil-escape--insert))
                (fkey (elt evil-escape-key-sequence 0))
                (skey (elt evil-escape-key-sequence 1))
+               (saved-event last-input-event)
                (evt (read-event nil nil evil-escape-delay)))
           (when inserted (evil-escape--delete))
           (set-buffer-modified-p modified)
@@ -200,7 +201,9 @@ with a key sequence."
                 (setq this-command esc-fun)
                 (setq this-original-command esc-fun))))
            ((null evt))
-           (t (setq unread-command-events
+           (t
+            (setq last-input-event saved-event)
+            (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
