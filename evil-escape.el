@@ -1,11 +1,11 @@
- ;;; evil-escape.el --- Escape from anything with a customizable key sequence
+;;; evil-escape.el --- Escape from anything with a customizable key sequence
 
 ;; Copyright (C) 2014-2015 syl20bnr
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
-;; Version: 3.15
+;; Version: 3.16
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
 ;; URL: https://github.com/syl20bnr/evil-escape
 
