@@ -36,6 +36,7 @@
 ;;   - quit minibuffer
 ;;   - quit compilation buffers
 ;;   - abort isearch
+;;   - abort ctrlf
 ;;   - quit ibuffer
 ;;   - quit image buffer
 ;;   - quit magit buffers
@@ -213,6 +214,7 @@ with a key sequence."
        (not evil-escape-inhibit)
        (or (window-minibuffer-p)
            (bound-and-true-p isearch-mode)
+           (bound-and-true-p ctrlf--active-p)
            (memq major-mode '(ibuffer-mode
                               image-mode))
            (evil-escape--is-magit-buffer)
@@ -239,6 +241,7 @@ with a key sequence."
    ((eq 'image-mode major-mode) 'quit-window)
    ((evil-escape--is-magit-buffer) 'evil-escape--escape-with-q)
    ((bound-and-true-p isearch-mode) 'isearch-abort)
+   ((bound-and-true-p ctrlf--active-p) 'ctrlf-cancel)
    ((window-minibuffer-p) 'abort-recursive-edit)
    (t (lookup-key evil-normal-state-map [escape]))))
 
@@ -261,6 +264,7 @@ with a key sequence."
   "Return the function to escape from emacs state."
   (cond
    ((bound-and-true-p isearch-mode) 'isearch-abort)
+   ((bound-and-true-p ctrlf--active-p) 'ctrlf-cancel)
    ((window-minibuffer-p) 'abort-recursive-edit)
    ((evil-escape--is-magit-buffer) 'evil-escape--escape-with-q)
    ((eq 'ibuffer-mode major-mode) 'ibuffer-quit)
