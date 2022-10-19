@@ -64,6 +64,9 @@
 ;; The key sequence can be entered in any order by setting
 ;; the variable `evil-escape-unordered-key-sequence' to non nil.
 
+;; The key sequence can be made case-insensitive by setting
+;; the variable `evil-escape-case-insensitive-key-sequence' to non nil.
+
 ;; A major mode can be excluded by adding it to the list
 ;; `evil-escape-excluded-major-modes'.
 
@@ -117,6 +120,11 @@
 (defcustom evil-escape-unordered-key-sequence nil
   "If non-nil then the key sequence can also be entered with the second
 key first."
+  :type 'boolean
+  :group 'evil-escape)
+
+(defcustom evil-escape-case-insensitive-key-sequence nil
+  "if non-nil then the key sequence is case-insensitive. This allows you to use any of df, DF, Df or dF to escape."
   :type 'boolean
   :group 'evil-escape)
 
@@ -178,6 +186,9 @@ with a key sequence."
     (`multiedit-insert 'evil-multiedit-state)
     (_ (evil-escape--escape-normal-state))))
 
+(defun evil-escape-command-keys ()
+    (if (and evil-escape-case-insensitive-key-sequence (char-or-string-p (this-command-keys))) (downcase (this-command-keys)) (this-command-keys)))
+
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
@@ -194,10 +205,10 @@ with a key sequence."
           (restore-buffer-modified-p modified)
           (cond
            ((and (characterp evt)
-                 (or (and (equal (this-command-keys) (evil-escape--first-key))
+                 (or (and (equal (evil-escape-command-keys) (evil-escape--first-key))
                           (char-equal evt skey))
                      (and evil-escape-unordered-key-sequence
-                          (equal (this-command-keys) (evil-escape--second-key))
+                          (equal (evil-escape-command-keys) (evil-escape--second-key))
                           (char-equal evt fkey))))
             (evil-repeat-stop)
             (let ((esc-fun (evil-escape-func)))
@@ -230,9 +241,9 @@ with a key sequence."
        (not (memq evil-state evil-escape-excluded-states))
        (or (not evil-escape-enable-only-for-major-modes)
            (memq major-mode evil-escape-enable-only-for-major-modes))
-       (or (equal (this-command-keys) (evil-escape--first-key))
+       (or (equal (evil-escape-command-keys) (evil-escape--first-key))
            (and evil-escape-unordered-key-sequence
-                (equal (this-command-keys) (evil-escape--second-key))))
+                (equal (evil-escape-command-keys) (evil-escape--second-key))))
        (not (cl-reduce (lambda (x y) (or x y))
                        (mapcar 'funcall evil-escape-inhibit-functions)
                        :initial-value nil))))

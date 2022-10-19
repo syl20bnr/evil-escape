@@ -12,6 +12,7 @@
         - [Key sequence](#key-sequence)
         - [Delay between keys](#delay-between-keys)
         - [Unordered key sequence](#unordered-key-sequence)
+        - [Case-insensitive key sequence](#case-insensitive-key-sequence)
         - [Excluding a major mode](#excluding-a-major-mode)
         - [Enable only for a list of major modes](#enable-only-for-a-list-of-major-modes)
         - [Inhibit evil-escape](#inhibit-evil-escape)
@@ -97,6 +98,13 @@ composed with the two same characters it is recommended to set the delay to
 
 The key sequence can be entered in any order by setting
 the variable `evil-escape-unordered-key-sequence` to non nil.
+
+### Case-Insensitive key sequence
+
+The key sequence can be entered without regard to case by setting
+the variable `evil-escape-case-insensitive-key-sequence` to non nil.
+
+This allows you to use df, DF, Df or dF to escape.
 
 ### Excluding a major mode
 
