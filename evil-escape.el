@@ -187,37 +187,37 @@ with a key sequence."
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-command-keys ()
-    (if (and evil-escape-case-insensitive-key-sequence (char-or-string-p (this-command-keys))) (downcase (this-command-keys)) (this-command-keys)))
+  (if (and evil-escape-case-insensitive-key-sequence (char-or-string-p (this-command-keys))) (downcase (this-command-keys)) (this-command-keys)))
 
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
-      (when (evil-escape-p)
-        ;; don't inhibit redisplay, else visual mode j key will not be updated
-        (let* ((inhibit-redisplay nil)
-               (fontification-functions nil)
-               (modified (buffer-modified-p))
-               (inserted (evil-escape--insert))
-               (fkey (elt evil-escape-key-sequence 0))
-               (skey (elt evil-escape-key-sequence 1))
-               (evt (read-event nil nil evil-escape-delay)))
-          (when inserted (evil-escape--delete))
-          (restore-buffer-modified-p modified)
-          (cond
-           ((and (characterp evt)
-                 (or (and (equal (evil-escape-command-keys) (evil-escape--first-key))
-                          (char-equal evt skey))
-                     (and evil-escape-unordered-key-sequence
-                          (equal (evil-escape-command-keys) (evil-escape--second-key))
-                          (char-equal evt fkey))))
-            (evil-repeat-stop)
-            (let ((esc-fun (evil-escape-func)))
-              (when esc-fun
-                (setq this-command esc-fun)
-                (setq this-original-command esc-fun))))
-           ((null evt))
-           (t (setq unread-post-input-method-events
-                    (append unread-post-input-method-events (list evt)))))))))
+    (when (evil-escape-p)
+      ;; don't inhibit redisplay, else visual mode j key will not be updated
+      (let* ((inhibit-redisplay nil)
+             (fontification-functions nil)
+             (modified (buffer-modified-p))
+             (inserted (evil-escape--insert))
+             (fkey (elt evil-escape-key-sequence 0))
+             (skey (elt evil-escape-key-sequence 1))
+             (evt (read-event nil nil evil-escape-delay)))
+        (when inserted (evil-escape--delete))
+        (restore-buffer-modified-p modified)
+        (cond
+         ((and (characterp evt)
+               (or (and (equal (evil-escape-command-keys) (evil-escape--first-key))
+                        (char-equal evt skey))
+                   (and evil-escape-unordered-key-sequence
+                        (equal (evil-escape-command-keys) (evil-escape--second-key))
+                        (char-equal evt fkey))))
+          (evil-repeat-stop)
+          (let ((esc-fun (evil-escape-func)))
+            (when esc-fun
+              (setq this-command esc-fun)
+              (setq this-original-command esc-fun))))
+         ((null evt))
+         (t (setq unread-post-input-method-events
+                  (append unread-post-input-method-events (list evt)))))))))
 
 (defadvice evil-repeat (around evil-escape-repeat-info activate)
   (let ((evil-escape-inhibit t))
