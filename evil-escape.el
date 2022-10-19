@@ -124,7 +124,8 @@ key first."
   :group 'evil-escape)
 
 (defcustom evil-escape-case-insensitive-key-sequence nil
-  "if non-nil then the key sequence is case-insensitive. This allows you to use any of df, DF, Df or dF to escape."
+  "if non-nil then the key sequence is case-insensitive.
+This allows you to use any of df, DF, Df or dF to escape."
   :type 'boolean
   :group 'evil-escape)
 
