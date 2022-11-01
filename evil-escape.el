@@ -7,7 +7,7 @@
 ;; Created: 22 Oct 2014
 ;; Version: 3.17
 ;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
-;; URL: https://github.com/syl20bnr/evil-escape
+;; URL: https://github.com/smile13241324/evil-escape
 
 ;; This file is not part of GNU Emacs.
 
@@ -185,6 +185,7 @@ with a key sequence."
     (`iedit-insert 'evil-iedit-state/quit-iedit-mode)
     (`multiedit 'evil-multiedit-abort)
     (`multiedit-insert 'evil-multiedit-state)
+    (`treemacs 'treemacs-quit)
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-command-keys ()
@@ -274,7 +275,6 @@ with a key sequence."
    ((and (fboundp 'helm-ag--edit-abort)
          (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
    ((eq 'neotree-mode major-mode) 'neotree-hide)
-   ((eq 'treemacs-mode major-mode) 'treemacs-quit)
    (t 'evil-normal-state)))
 
 (defun evil-escape--escape-emacs-state ()
