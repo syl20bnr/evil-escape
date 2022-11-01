@@ -155,6 +155,9 @@ This allows you to use any of df, DF, Df or dF to escape."
 (defvar evil-escape-inhibit nil
   "When non nil evil-escape is inhibited.")
 
+(defconst evil-escape-version "3.17"
+  "The current version of evil-escape")
+
 ;;;###autoload
 (define-minor-mode evil-escape-mode
   "Buffer-local minor mode to escape insert state and everything else
