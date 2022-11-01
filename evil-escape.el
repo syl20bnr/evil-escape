@@ -1,12 +1,14 @@
-;;; evil-escape.el --- Escape from anything with a customizable key sequence
+;;; evil-escape.el --- Escape from anything with a customizable key sequence -*- lexical-binding: t -*-
 
-;; Copyright (C) 2014-2015 syl20bnr
+;; Copyright (C) 2014-2015 syl20bnr and
+;; Copyright (C) 2022 smile13241324
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
+;;         Maxi Wolff <smile13241324@gmail.com>
 ;; Keywords: convenience editing evil
 ;; Created: 22 Oct 2014
 ;; Version: 3.17
-;; Package-Requires: ((emacs "24") (evil "1.0.9") (cl-lib "0.5"))
+;; Package-Requires: ((emacs "28") (evil "1.15.0") (cl-lib "0.5"))
 ;; URL: https://github.com/smile13241324/evil-escape
 
 ;; This file is not part of GNU Emacs.
