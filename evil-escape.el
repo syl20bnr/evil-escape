@@ -96,11 +96,10 @@
 (require 'evil)
 (require 'cl-lib)
 
-(eval-when-compile
-  (declare-function evil-iedit-state/quit-iedit-mode "evil-iedit-state.el"))
+(eval-when-compile (declare-function evil-iedit-state/quit-iedit-mode
+                                                         "evil-iedit-state.el"))
 
-(defgroup evil-escape nil
-  "Key sequence to escape insert state and everything else."
+(defgroup evil-escape nil "Key sequence to escape insert state and everything else."
   :prefix "evil-escape-"
   :group 'evil)
 
@@ -114,25 +113,23 @@
   :type 'sexp
   :group 'evil-escape)
 
-(defcustom evil-escape-delay 0.1
-  "Max time delay between two key presses."
+(defcustom evil-escape-delay 0.1 "Max time delay between two key presses."
   :type 'number
   :group 'evil-escape)
 
-(defcustom evil-escape-unordered-key-sequence nil
-  "If non-nil then the key sequence can also be entered with the second
-key first."
-  :type 'boolean
+(defcustom evil-escape-unordered-key-sequence
+  nil "If non-nil then the key sequence can also be entered with the second
+key first." :type 'boolean
   :group 'evil-escape)
 
-(defcustom evil-escape-case-insensitive-key-sequence nil
-  "if non-nil then the key sequence is case-insensitive.
+(defcustom evil-escape-case-insensitive-key-sequence
+  nil "if non-nil then the key sequence is case-insensitive.
 This allows you to use any of df, DF, Df or dF to escape."
   :type 'boolean
   :group 'evil-escape)
 
-(defcustom evil-escape-excluded-major-modes nil
-  "Excluded major modes where escape sequences have no effect."
+(defcustom evil-escape-excluded-major-modes
+  nil "Excluded major modes where escape sequences have no effect."
   :type 'sexp
   :group 'evil-escape)
 
@@ -141,8 +138,8 @@ This allows you to use any of df, DF, Df or dF to escape."
   :type 'sexp
   :group 'evil-escape)
 
-(defcustom evil-escape-enable-only-for-major-modes nil
-  "List of major modes where evil-escape is enabled."
+(defcustom evil-escape-enable-only-for-major-modes
+  nil "List of major modes where evil-escape is enabled."
   :type 'sexp
   :group 'evil-escape)
 
@@ -152,11 +149,9 @@ This allows you to use any of df, DF, Df or dF to escape."
   :type 'sexp
   :group 'evil-escape)
 
-(defvar evil-escape-inhibit nil
-  "When non nil evil-escape is inhibited.")
+(defvar evil-escape-inhibit nil "When non nil evil-escape is inhibited.")
 
-(defconst evil-escape-version "3.17"
-  "The current version of evil-escape")
+(defconst evil-escape-version "3.17" "The current version of evil-escape")
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
@@ -220,6 +215,13 @@ with a key sequence."
           (evil-repeat-stop)
           (let ((esc-fun (evil-escape-func)))
             (when esc-fun
+
+              ;; Escape from company when active
+              (when (and
+                     (fboundp 'company--active-p)
+                     (company--active-p))
+                (company-abort))
+
               (setq this-command esc-fun)
               (setq this-original-command esc-fun))))
          ((null evt))
