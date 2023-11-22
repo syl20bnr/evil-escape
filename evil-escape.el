@@ -179,29 +179,29 @@ If any of these functions return non nil, evil escape will be inhibited."
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
   (with-demoted-errors "evil-escape: Error %S"
-      (when (evil-escape-p)
-        (let* ((modified (buffer-modified-p))
-               (inserted (evil-escape--insert))
-               (fkey (elt evil-escape-key-sequence 0))
-               (skey (elt evil-escape-key-sequence 1))
-               (evt (read-event nil nil evil-escape-delay)))
-          (when inserted (evil-escape--delete))
-          (set-buffer-modified-p modified)
-          (cond
-           ((and (characterp evt)
-                 (or (and (equal (this-command-keys) (evil-escape--first-key))
-                          (char-equal evt skey))
-                     (and evil-escape-unordered-key-sequence
-                          (equal (this-command-keys) (evil-escape--second-key))
-                          (char-equal evt fkey))))
-            (evil-repeat-stop)
-            (let ((esc-fun (evil-escape-func)))
-              (when esc-fun
-                (setq this-command esc-fun)
-                (setq this-original-command esc-fun))))
-           ((null evt))
-           (t (setq unread-command-events
-                    (append unread-command-events (list evt)))))))))
+    (when (evil-escape-p)
+      (let* ((modified (buffer-modified-p))
+             (inserted (evil-escape--insert))
+             (fkey (elt evil-escape-key-sequence 0))
+             (skey (elt evil-escape-key-sequence 1))
+             (evt (read-event nil nil evil-escape-delay)))
+        (when inserted (evil-escape--delete))
+        (set-buffer-modified-p modified)
+        (cond
+         ((and (characterp evt)
+               (or (and (equal (this-command-keys) (evil-escape--first-key))
+                        (char-equal evt skey))
+                   (and evil-escape-unordered-key-sequence
+                        (equal (this-command-keys) (evil-escape--second-key))
+                        (char-equal evt fkey))))
+          (evil-repeat-stop)
+          (let ((esc-fun (evil-escape-func)))
+            (when esc-fun
+              (setq this-command esc-fun)
+              (setq this-original-command esc-fun))))
+         ((null evt))
+         (t (setq unread-command-events
+                  (append unread-command-events (list evt)))))))))
 
 (defun evil-escape--evil-repeat (fn &rest args)
   "Bind `evil-escape-inhibit' to t."
