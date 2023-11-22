@@ -252,10 +252,12 @@ If any of these functions return non nil, evil escape will be inhibited."
                            ert-results-mode
                            ert-simple-view-mode
                            compilation-mode
-                           image-mode))) 'quit-window)
+                           image-mode)))
+    'quit-window)
    ((eq 'undo-tree-visualizer-mode major-mode) 'undo-tree-visualizer-quit)
    ((and (fboundp 'helm-ag--edit-abort)
-         (string-equal "*helm-ag-edit*" (buffer-name))) 'helm-ag--edit-abort)
+         (string-equal "*helm-ag-edit*" (buffer-name)))
+    'helm-ag--edit-abort)
    ((eq 'neotree-mode major-mode) 'neotree-hide)
    (t 'evil-normal-state)))
 
@@ -269,7 +271,8 @@ If any of these functions return non nil, evil escape will be inhibited."
    ((eq 'emoji-cheat-sheet-plus-buffer-mode major-mode) 'kill-this-buffer)
    ((eq 'paradox-menu-mode major-mode) 'evil-escape--escape-with-q)
    ((memq major-mode '(gist-list-menu-mode
-                       image-mode)) 'quit-window)
+                       image-mode))
+    'quit-window)
    (t 'evil-normal-state)))
 
 (defun evil-escape--first-key ()
