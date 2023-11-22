@@ -1,4 +1,4 @@
-;;; evil-escape.el --- Escape from anything with a customizable key sequence
+;;; evil-escape.el --- Escape from anything with a customizable key sequence  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2014-2015 syl20bnr
 ;;
@@ -292,7 +292,7 @@ with a key sequence."
 
 (defun evil-escape--insert ()
   "Insert the first key of the sequence."
-  (condition-case err
+  (condition-case nil
       (pcase evil-state
         (`insert (evil-escape--insert-2) t)
         (`emacs (evil-escape--insert-2) t)
