@@ -26,6 +26,8 @@
 
 ;;; Commentary:
 
+;; Escape from anything with a customizable key sequence.
+
 ;; Press `fd` quickly to:
 ;; ----------------------
 
