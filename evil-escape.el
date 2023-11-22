@@ -203,9 +203,11 @@ with a key sequence."
            (t (setq unread-command-events
                     (append unread-command-events (list evt)))))))))
 
-(defadvice evil-repeat (around evil-escape-repeat-info activate)
+(defun evil-escape--evil-repeat (fn &rest args)
+  "Bind `evil-escape-inhibit' to t."
   (let ((evil-escape-inhibit t))
-    ad-do-it))
+    (apply fn args)))
+(advice-add 'evil-repeat :around #'evil-escape--evil-repeat)
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape can run."
@@ -300,7 +302,7 @@ with a key sequence."
         (`normal
          (when (window-minibuffer-p) (evil-escape--insert-func) t))
         (`iedit-insert (evil-escape--insert-func) t))
-    ('error nil)))
+    (error nil)))
 
 (defun evil-escape--insert-2 ()
   "Insert character while taking into account mode specificites."
