@@ -84,7 +84,7 @@
 ;; (global-set-key (kbd "C-c C-g") 'evil-escape)
 
 ;; More information in the readme of the repository:
-;; https://github.com/syl20bnr/evil-escape
+;; at https://github.com/emacsorphanage/evil-escape.
 
 ;;; Code:
 
