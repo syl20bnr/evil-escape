@@ -113,8 +113,7 @@
   :group 'evil-escape)
 
 (defcustom evil-escape-unordered-key-sequence nil
-  "If non-nil then the key sequence can also be entered with the second
-key first."
+  "Whether the key sequence can also be entered with the second key first."
   :type 'boolean
   :group 'evil-escape)
 
@@ -135,7 +134,7 @@ key first."
 
 (defcustom evil-escape-inhibit-functions nil
   "List of zero argument predicate functions disabling evil-escape.
- If any of these functions return non nil, evil escape will be inhibited."
+If any of these functions return non nil, evil escape will be inhibited."
   :type 'sexp
   :group 'evil-escape)
 
@@ -144,8 +143,7 @@ key first."
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
-  "Buffer-local minor mode to escape insert state and everything else
-with a key sequence."
+  "Minor mode to escape insert state and everything else with a key sequence."
   :lighter (:eval evil-escape-lighter)
   :group 'evil
   :global t
