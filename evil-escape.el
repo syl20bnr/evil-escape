@@ -341,4 +341,7 @@ If any of these functions return non nil, evil escape will be inhibited."
 
 (provide 'evil-escape)
 
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; evil-escape.el ends here
