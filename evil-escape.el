@@ -128,25 +128,25 @@ This allows you to use any of df, DF, Df or dF to escape."
   :type 'boolean
   :group 'evil-escape)
 
-(defcustom evil-escape-excluded-major-modes
-  nil "Excluded major modes where escape sequences have no effect."
-  :type 'sexp
+(defcustom evil-escape-excluded-major-modes nil
+  "Excluded major modes where escape sequences have no effect."
+  :type '(repeat symbol)
   :group 'evil-escape)
 
 (defcustom evil-escape-excluded-states nil
   "Excluded states where escape sequences have no effect."
-  :type 'sexp
+  :type '(repeat symbol)
   :group 'evil-escape)
 
-(defcustom evil-escape-enable-only-for-major-modes
-  nil "List of major modes where evil-escape is enabled."
-  :type 'sexp
+(defcustom evil-escape-enable-only-for-major-modes nil
+  "List of major modes where evil-escape is enabled."
+  :type '(repeat symbol)
   :group 'evil-escape)
 
 (defcustom evil-escape-inhibit-functions nil
   "List of zero argument predicate functions disabling evil-escape.
  If any of these functions return non nil, evil escape will be inhibited."
-  :type 'sexp
+  :type '(repeat function)
   :group 'evil-escape)
 
 (defvar evil-escape-inhibit nil "When non nil evil-escape is inhibited.")
