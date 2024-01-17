@@ -234,9 +234,9 @@ with a key sequence."
          (t (setq unread-post-input-method-events
                   (append unread-post-input-method-events (list evt)))))))))
 
-(defadvice evil-repeat (around evil-escape-repeat-info activate)
+(define-advice evil-repeat (:around (f &rest args) evil-escape-repeat-info)
   (let ((evil-escape-inhibit t))
-    ad-do-it))
+    (apply f args)))
 
 (defun evil-escape-p ()
   "Return non-nil if evil-escape can run."
