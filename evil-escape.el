@@ -96,8 +96,8 @@
 (require 'evil)
 (require 'cl-lib)
 
-(eval-when-compile (declare-function evil-iedit-state/quit-iedit-mode
-                                                         "evil-iedit-state.el"))
+(eval-when-compile
+  (declare-function evil-iedit-state/quit-iedit-mode "evil-iedit-state.el"))
 
 (defgroup evil-escape nil "Key sequence to escape insert state and everything else."
   :prefix "evil-escape-"
@@ -117,13 +117,14 @@
   :type 'number
   :group 'evil-escape)
 
-(defcustom evil-escape-unordered-key-sequence
-  nil "If non-nil then the key sequence can also be entered with the second
-key first." :type 'boolean
+(defcustom evil-escape-unordered-key-sequence nil
+  "If non-nil then the key sequence can also be entered with the second key first."
+  :type 'boolean
   :group 'evil-escape)
 
-(defcustom evil-escape-case-insensitive-key-sequence
-  nil "if non-nil then the key sequence is case-insensitive.
+(defcustom evil-escape-case-insensitive-key-sequence nil
+  "If non-nil, the key sequence is case-insensitive.
+
 This allows you to use any of df, DF, Df or dF to escape."
   :type 'boolean
   :group 'evil-escape)
@@ -149,9 +150,11 @@ This allows you to use any of df, DF, Df or dF to escape."
   :type '(repeat function)
   :group 'evil-escape)
 
-(defvar evil-escape-inhibit nil "When non nil evil-escape is inhibited.")
+(defvar evil-escape-inhibit nil
+  "When non-nil, evil-escape is inhibited.")
 
-(defconst evil-escape-version "3.17" "The current version of evil-escape")
+(defconst evil-escape-version "3.17"
+  "The current version of evil-escape")
 
 ;;;###autoload
 (define-minor-mode evil-escape-mode
@@ -189,7 +192,10 @@ with a key sequence."
     (_ (evil-escape--escape-normal-state))))
 
 (defun evil-escape-command-keys ()
-  (if (and evil-escape-case-insensitive-key-sequence (char-or-string-p (this-command-keys))) (downcase (this-command-keys)) (this-command-keys)))
+  (if (and evil-escape-case-insensitive-key-sequence
+           (char-or-string-p (this-command-keys)))
+      (downcase (this-command-keys))
+    (this-command-keys)))
 
 (defun evil-escape-pre-command-hook ()
   "evil-escape pre-command hook."
@@ -312,11 +318,13 @@ with a key sequence."
 
 (defun evil-escape--insert-func ()
   "Default insert function."
-  (when (not buffer-read-only) (self-insert-command 1)))
+  (unless buffer-read-only
+    (self-insert-command 1)))
 
 (defun evil-escape--delete-func ()
   "Delete char in current buffer if not read only."
-  (when (not buffer-read-only) (delete-char -1)))
+  (unless buffer-read-only
+    (delete-char -1)))
 
 (defun evil-escape--insert ()
   "Insert the first key of the sequence."
@@ -331,7 +339,7 @@ with a key sequence."
     ('error nil)))
 
 (defun evil-escape--insert-2 ()
-  "Insert character while taking into account mode specificites."
+  "Insert character while taking into account mode specificities."
   (pcase major-mode
     (`term-mode (call-interactively 'term-send-raw))
     (_ (cond
@@ -349,7 +357,7 @@ with a key sequence."
     (`iedit-insert (evil-escape--delete-func))))
 
 (defun evil-escape--delete-2 ()
-  "Delete character while taking into account mode specifities."
+  "Delete character while taking into account mode specificities."
   (pcase major-mode
     (`term-mode (call-interactively 'term-send-backspace))
     (_ (cond
